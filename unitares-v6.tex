@@ -1950,6 +1950,137 @@ production database reproduces the per-class breakdown; running
 with \texttt{-{}-csv} produces a row-level dump for further
 analysis.
 
+% ───────────────────────────────────────────────────────────
+\subsection{Audit-Log Evidence for Class-Conditional Grounding}
+\label{sec:audit-log-evidence}
+
+The counterfactual of \Cref{sec:verdict-counterfactual} establishes
+that the coherence formula choice has material gating consequences,
+but it measures divergence between the two formulas rather than
+correspondence with labelled outcomes. The governance Postgres instance
+records a richer signal in \texttt{audit.outcome\_events}: labelled
+\texttt{trajectory\_validated} outcomes whose EISV state at the time of
+classification is also stored. We report a direct discriminative test
+of that signal here.\footnote{%
+  Reproducibility: \texttt{psql -d governance -f
+  scripts/audits/legacy\_coherence\_d.sql} re-runs the full query
+  against any governance instance with the audit schema. Numbers shift
+  as the corpus grows; the structural finding ($S$ and $\phi$ large
+  $d$; legacy coherence negligible $d$) is stable across the rolling
+  30-day windows we have observed.}
+
+\textbf{Setup.} We query \texttt{audit.outcome\_events} for
+\texttt{trajectory\_validated} outcomes in a 30-day window ending
+2026-05-01, restricting to rows with non-null \texttt{eisv\_e}. The
+sample contains $n_{\text{good}} = 22{,}740$ and $n_{\text{bad}} = 580$.
+For each EISV component and for the deployed legacy coherence value
+(\Cref{sec:coherence}), we compute Cohen's~$d$ with sign convention:
+positive $d$ means bad outcomes have higher values.
+
+\textbf{Result.} \Cref{tab:audit-d} reports effect sizes. The state
+coordinates $S$, $\phi$, and $E$ carry large or medium effect sizes
+($|d| \geq 0.54$). The legacy $\tanh$-of-$V$ coherence achieves
+$d = 0.133$---negligible by any conventional threshold. Its means are
+$0.490$ (good) vs.\ $0.491$ (bad): indistinguishable in production.
+
+\begin{table}[htbp]
+\centering\small
+\caption{EISV component discriminative power on
+  \texttt{trajectory\_validated} outcomes, governance audit log snapshot
+  2026-05-01 (last 30 days). $n_{\text{good}} = 22{,}740$;
+  $n_{\text{bad}} = 580$. Cohen's~$d$: positive = bad outcomes have
+  higher value; $|d| < 0.2$ negligible, $0.2$--$0.5$ small,
+  $0.5$--$0.8$ medium, $|d| > 0.8$ large.}
+\label{tab:audit-d}
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Component} & \textbf{Effect} & $d$ \\
+\midrule
+$E$                           & medium     & $-0.542$ \\
+$I$                           & small      & $-0.289$ \\
+$S$                           & large      & $+0.874$ \\
+$V$                           & small      & $-0.326$ \\
+$\phi$                        & large      & $-0.860$ \\
+Legacy coherence ($\tanh\,V$) & negligible & $+0.133$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Per-regime breakdown.} The fleet-aggregate $d_S = +0.874$
+conceals a regime-dependent directional inversion that provides direct
+empirical support for the class-conditional reformulation of
+\Cref{sec:class-calibration}. \Cref{tab:audit-regime} reports per-regime
+means for $S$, $\phi$, and legacy coherence.
+
+In CONVERGENCE, bad outcomes have \emph{lower} $S$ than good outcomes
+($0.140$ vs.\ $0.172$): the signal is premature lock-in on the wrong
+answer. In DIVERGENCE, EXPLORATION, and TRANSITION, the direction
+reverses---bad outcomes have \emph{higher} $S$ ($0.310$ vs.\ $0.273$,
+$0.333$ vs.\ $0.251$, $0.325$ vs.\ $0.271$ respectively): the signal
+is runaway uncertainty. A single fleet-wide $S$ threshold gates the
+wrong direction in at least one regime; class-conditional gating with
+regime-aware healthy operating points is what the data is asking for
+(\Cref{sec:heterogeneity}). Legacy coherence is flat (${\approx}0.49$)
+across every regime $\times$ outcome cell, confirming that the
+negligible fleet-aggregate $d$ is not an artefact of inter-regime
+cancellation.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Per-regime means of $S$, $\phi$, and legacy coherence, broken
+  down by outcome label. In CONVERGENCE, bad outcomes have \emph{lower}
+  $S$ (premature lock-in); in DIVERGENCE, EXPLORATION, and TRANSITION,
+  bad outcomes have \emph{higher} $S$ (runaway uncertainty). Legacy
+  coherence is flat across all cells. Same sample as
+  \Cref{tab:audit-d}.}
+\label{tab:audit-regime}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+\textbf{Regime} & \textbf{Bad?} & $n$ & $S$ & $\phi$ & Leg.\ coh. \\
+\midrule
+CONVERGENCE  & No  & $11{,}937$ & 0.172 & 0.199 & 0.488 \\
+CONVERGENCE  & Yes &        $99$ & 0.140 & 0.169 & 0.490 \\
+DIVERGENCE   & No  &  $3{,}904$ & 0.273 & 0.194 & 0.492 \\
+DIVERGENCE   & Yes &       $179$ & 0.310 & 0.146 & 0.490 \\
+EXPLORATION  & No  &  $6{,}245$ & 0.251 & 0.193 & 0.491 \\
+EXPLORATION  & Yes &       $231$ & 0.333 & 0.137 & 0.492 \\
+TRANSITION   & No  &       $654$ & 0.271 & 0.180 & 0.488 \\
+TRANSITION   & Yes &        $71$ & 0.325 & 0.158 & 0.491 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation.} The empirically broken piece is the legacy
+$\tanh$-of-$V$ coherence---the aggregation function currently in
+deployment. The state coordinates it consumes are not the failure:
+$d_S = +0.874$, $d_\phi = -0.860$, and $d_E = -0.542$ establish that
+$S$, $\phi$, and $E$ carry substantial predictive signal for labelled
+trajectory outcomes. The antithesis claim that the EISV four-dimensional
+cut is overhead is refuted by these effect sizes. Manifold-coherence is
+the empirically required replacement for the verdict-mapping aggregation
+function, not a theoretical preference (\Cref{sec:heterogeneity}).
+
+\textbf{Two-leg evidence structure.} This subsection constitutes
+\emph{leg~(a)}: a retrospective audit-log test showing that the state
+coordinates are load-bearing and the published aggregation function is
+not. \emph{Leg~(b)} is a prospective bare-vs.-EISV kernel-tuning lane
+comparison measuring $\Delta$correctness and $\Delta$speed from the
+Humanity's Last Hackathon bake-off; the operator will insert those
+numbers in the placeholder below before this draft is merged.
+
+% <HLH-LANE-DATA>
+% Placeholder: operator to paste Humanity's Last Hackathon (HLH)
+% bare-vs.-EISV lane bake-off results here before merging.
+%
+% Expected content:
+%   - Table or paragraph reporting Δcorrectness and Δspeed for the
+%     bare (no-governance) lane vs. the EISV-governed lane, sourced
+%     from the hlh-codex-workflow repo (not yet pushed to GitHub).
+%   - Methodology notes: task distribution, judge, sample size n.
+%   - Framing: this is leg (b) of the two-leg evidence structure;
+%     leg (a) is the audit-log retrospective above.
+% </HLH-LANE-DATA>
+
 \subsection{Limits of the Snapshot}
 \label{sec:limits-snapshot}
 
