@@ -4,11 +4,16 @@
 # Two checks, same class as the unitares repo-scope guard:
 #   1. filename classes that are always internal (handoffs, AI-review records,
 #      cover letters, endorsement strategy, working notes)
-#   2. content markers of the AI-review process in tracked markdown
+#   2. content markers of the AI-review process in tracked files
 #
 # Exemptions: _internal/ (gitignored anyway — belt and braces), .github/,
 # AI-use disclosures (their PURPOSE is describing AI involvement), and the
 # paper sources themselves (reviewed prose, not stray process files).
+#
+# Pathspec note: excludes use the long form ':(exclude)...' — the short
+# form ':!...' fails on leading underscores ("Unimplemented pathspec
+# magic"), and a failed git grep piped through '|| true' would pass this
+# guard vacuously.
 name: reader-surface-guard
 on: [push, pull_request]
 jobs:
@@ -27,7 +32,9 @@ jobs:
             bad=1
           fi
           chits=$(git grep -lIE 'live-verifier|council pass|council fold|three-lane council' -- \
-            ':!_internal' ':!.github' ':!*disclosure*' ':!*.tex' ':!*.bib' || true)
+            ':(exclude)_internal' ':(exclude).github' ':(exclude)*disclosure*' \
+            ':(exclude)*.tex' \
+            ':(exclude)*.bib' || true)
           if [ -n "$chits" ]; then
             echo "::error::AI-review process markers in tracked files (move to _internal/ or reword):"
             echo "$chits"
