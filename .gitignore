@@ -17,3 +17,4 @@
 
 # internal process artifacts — local-only, never tracked
 _internal/
+.unitares/
