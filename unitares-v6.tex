@@ -46,7 +46,7 @@ of Heterogeneous Agent Fleets}
   \texttt{founder@cirwel.org}
 }
 
-\date{Draft --- \today}
+\date{Version 6.9.3 --- October 2, 2026}
 
 % ═══════════════════════════════════════════════════════════
 \begin{document}
@@ -67,10 +67,13 @@ and ephemeral parser agents---do not share an output modality, a
 tempo, or a healthy operating point.
 
 UNITARES addresses this with two structural moves. First, it
-reinterprets the EISV coordinates in information-theoretic terms:
-$S$ as response-distribution entropy, $I$ as context-response
-mutual information, $E$ as negative variational free energy, and
-$V$ as an accumulated free-energy residual. Second, it makes
+specifies information-theoretic target semantics for the EISV
+coordinates: $S$ as response-distribution entropy, $I$ as
+context-response mutual information, $E$ as negative variational
+free energy, and $V$ as an accumulated free-energy residual. These
+are targets. The deployed system computes all four coordinates
+with tier-3 heuristic estimators; the higher-tier estimators that
+would compute them as specified are not yet implemented. Second, it makes
 normalization class-conditional: scale constants and healthy
 operating points are functions of an agent class keyed on
 existing identity tags, with fleet-wide defaults retained only as
@@ -84,8 +87,9 @@ presentation-producing pipeline stages so a deployed governance
 framework can acquire new coordinate semantics without breaking
 live behavior; we argue this mechanism generalizes to any
 deployed agent framework facing a semantic-coordinate change.
-Stability of the dynamics is preserved under the reformulation
-and established by contraction analysis (\Cref{app:contraction-proof}).
+A contraction certificate (\Cref{app:contraction-proof}) holds
+for the deployed dynamics; a deployment that consumes a grounded
+coherence must be re-certified (\Cref{rem:phase3-contraction}).
 
 We illustrate the framework with a production deployment snapshot from
 February 20, 2026, covering 903 registered agents and 75 active agents.
@@ -93,13 +97,24 @@ A verdict counterfactual on a 30-day production slice
 ($N = 13{,}310$) shows that $28.9\%$ of basin assignments would flip
 under class-conditional grounded coherence, with flip rates ranging
 $15$--$33\%$ per class and a strong directional bias into the
-\texttt{low} basin, showing that the homogenization-failure-mode
-argument has first-order consequences at the gating layer rather
-than only at the reported-value layer. A first per-class calibration
+\texttt{low} basin. The flips are largely mechanical: the legacy
+coherence is nearly constant (about $0.49$ for every agent), so
+substituting any varying score moves basins. The counterfactual
+shows that the formula choice changes gating labels; it does not
+show that the new labels are correct, since no outcome grades
+either form. A first per-class calibration
 of the manifold-coherence path is reported here; the remaining scale
 constants and higher-tier estimators (logprob and multi-sample) are
 deferred to subsequent work.
 \end{abstract}
+
+\noindent\textit{Version note (6.9.3, October 2026).} This version
+states in the abstract, the model section and the conclusion what
+earlier versions said only in the body: the information-theoretic
+definitions are target semantics, and the deployed system computes
+all four coordinates with tier-3 heuristic estimators. It also
+qualifies the stability and counterfactual claims and corrects the
+production start date to November 2025.
 
 \textbf{Keywords:} autonomous governance, information theory,
 variational free energy, heterogeneous multi-agent systems,
@@ -108,7 +123,7 @@ class-conditional calibration, AI safety
 \vspace{1ex}
 \noindent\fbox{\parbox{0.97\columnwidth}{\small
 \textbf{Reading aids.} We introduce four terms up front:
-\emph{Variational free energy} ($-F$, used as the $E$ coordinate):
+\emph{Variational free energy} ($-F$, the target semantics of the $E$ coordinate):
 the Free-Energy-Principle quantity measuring how well an agent's
 predictions match outcomes; high $E$ = low surprise.
 \emph{Cosmological soup}: the failure mode of averaging a
@@ -192,11 +207,11 @@ This paper makes five contributions:
   behavior, and observed fleet dynamics. We also report a verdict
   counterfactual on a $13{,}310$-row production slice showing that
   $28.9\%$ of basin assignments would flip under class-conditional
-  grounded coherence, with the dominant direction of flips
-  (predominantly into the \texttt{low} basin) showing that the
-  homogenization-failure-mode argument of contribution~$1$ has
-  first-order consequences at the gating layer, not only at the
-  reported-value layer.
+  grounded coherence, predominantly into the \texttt{low} basin.
+  Because the legacy coherence is nearly constant, the direction is
+  largely mechanical: the counterfactual shows that the formula
+  choice changes gating labels, not that the new labels are
+  correct.
 \end{enumerate}
 
 \subsection{Limitations and Scope}
@@ -258,9 +273,11 @@ Lohmiller and Slotine~\cite{lohmiller1998contraction} established
 contraction analysis as a tool for nonlinear stability, later
 extended to Riemannian metrics~\cite{slotine2003modular}. We adapt
 this framework to the governance domain, where the ``plant'' is
-an agent's state vector rather than a physical system. Contraction
-is preserved by the grounded reformulation but is no longer the
-headline contribution; see \Cref{app:contraction-proof}.
+an agent's state vector rather than a physical system. The
+contraction certificate covers the deployed dynamics; a grounded
+coherence requires re-certification (\Cref{rem:phase3-contraction}),
+and contraction is no longer the headline contribution; see
+\Cref{app:contraction-proof}.
 
 \paragraph{AI Safety and Governance.}
 Constitutional AI~\cite{bai2022constitutional} and
@@ -368,8 +385,9 @@ We refer to the failure mode of fleet-wide normalization as
 entropic, with no class structure and no distinguishability between
 populations whose dynamics are genuinely different. The
 information-theoretic grounding presented in
-\Cref{sec:grounding} resolves the metaphor problem in the
-coordinates themselves; the class-conditional calibration
+\Cref{sec:grounding} specifies how to resolve the metaphor problem
+in the coordinates themselves (the deployed estimators remain
+heuristic); the class-conditional calibration
 presented in \Cref{sec:class-calibration} resolves the
 homogenization problem at the normalization layer. These are
 distinct contributions and either can fail independently.
@@ -443,9 +461,10 @@ $\eisv = (E, I, S, V)^\top$ evolving on the compact set
 \[
   \mathcal{X} = [0,1]^3 \times [-1, 1]
 \]
-Each coordinate is a normalized information-theoretic quantity;
-the formal definitions appear in \Cref{sec:grounding}, with
-class-conditional normalization in \Cref{sec:class-calibration}.
+Each coordinate has a normalized information-theoretic target
+definition, given in \Cref{sec:grounding} with class-conditional
+normalization in \Cref{sec:class-calibration}; the deployed system
+computes all four with tier-3 heuristic estimators.
 This section presents the dynamics of the coordinates as a
 self-contained dynamical system, deferring the grounding of each
 coordinate to \Cref{sec:grounding}.
@@ -553,8 +572,10 @@ In production, the damping term $\delta V$ in \eqref{eq:dV} constrains
 $V$ to approximately $[-0.1, 0.1]$, yielding $C(V) \approx 0.49$; the
 empirical distribution is reported in \Cref{sec:experiments}. The
 narrow range near the coherence-function midpoint is the operational
-consequence of the damping analysis rather than a deficiency of the
-signal.
+consequence of the damping analysis. It is also a limitation: a
+coherence that barely varies across agents carries little
+information for gating (\Cref{sec:experiments},
+\Cref{sec:verdict-counterfactual}).
 \end{remark}
 
 \subsection{Adaptive Entropy Coupling}
@@ -601,9 +622,9 @@ deployment.
 The \eisv\ system presented in \Cref{sec:dynamics} specifies a
 coupled dynamical signal for governance decisions but does not
 specify what each coordinate measures. This section supplies the
-information-theoretic semantics: each coordinate becomes a
-computable quantity with a tiered estimation recipe and a
-provenance tag, without changing the dynamics of
+information-theoretic target semantics: each coordinate is given
+a definition with a tiered estimation recipe and a provenance tag,
+of which only the heuristic tier~3 is deployed, without changing the dynamics of
 \Cref{sec:equations}.
 
 \begin{remark}[What stays, what changes]
@@ -611,7 +632,7 @@ The ODE structure in \Cref{eq:dE,eq:dI,eq:dS,eq:dV}, the contraction
 analysis in \Cref{sec:contraction}, the governor in
 \Cref{sec:governor}, and the verdict thresholds in \Cref{eq:phi} are
 all preserved. Grounding changes what $E$, $I$, $S$, and
-$\cv$ \emph{are}; it does not change what the governance surface
+$\cv$ are \emph{specified to measure}; it does not change what the governance surface
 \emph{does}.
 \end{remark}
 
@@ -748,7 +769,7 @@ unchanged. No payload or threshold change is required.
 
 \paragraph{$C$---Coherence.}
 We replace the hand-shaped $\tanh$ in \Cref{eq:coherence} with one of
-two equivalent grounded forms. The information-theoretic form is
+two related grounded forms. The information-theoretic form is
 \begin{equation}
   C = \exp\!\left(-D_{\mathrm{KL}}(q_{\text{now}} \,\|\, q_{\text{ref}})\right)
   \label{eq:C-KL}
@@ -761,8 +782,11 @@ manifold (Lyapunov) form is
   \Delta &= (E, I, S) - (E, I, S)_{\text{healthy}}
   \label{eq:C-manifold}
 \end{align}
-The two are equivalent under a Gaussian approximation of the state
-distribution around the healthy operating point. The manifold form
+The two are related, not equivalent: the KL form compares response
+distributions, the manifold form compares EISV coordinates, and they
+coincide only under strong assumptions (for example, a Gaussian
+state distribution whose sufficient statistics are those
+coordinates). The manifold form
 ships first because it requires only the existing $\eisv$
 coordinates; the KL form requires an empirically calibrated
 reference.
@@ -850,8 +874,9 @@ frameworks. Class-conditional grounding
 that does.
 
 The grounded reformulation of
-\Cref{sec:grounding} preserves stability \emph{within each agent
-class}. The dynamics
+\Cref{sec:grounding} is designed to preserve stability
+\emph{within each agent class}, subject to the per-class
+re-certification described below. The dynamics
 $\dot{\eisv} = f(\eisv, t)$ are unchanged; only the meaning of
 the coordinates and the values of the scale constants change.
 The contraction certificate of \Cref{thm:contraction} relies on
@@ -1554,9 +1579,9 @@ real system-level concerns rather than hypothetical ones.
 
 The UNITARES framework is deployed as a Model Context Protocol (MCP)
 server that provides governance services to autonomous AI agents. Each
-agent connects via standard MCP transport and receives governance
-verdicts on every action. The system has been in continuous production
-since December 2025.
+agent connects via standard MCP transport and receives a
+governance verdict at each check-in. The system has been in continuous production
+since November 2025.
 
 \begin{table}[htbp]
 \centering
@@ -1572,7 +1597,7 @@ and reproducibility caveat.}
 Registered agents & 903 \\
 Active ($>5$ updates) & 75 \\
 Max updates (single agent) & 48{,}668 \\
-Deployment duration & 69 days \\
+Observation window & 69 days \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1630,15 +1655,15 @@ These values are consistent with several qualitative predictions
 of the dynamics:
 \begin{enumerate}
 \item \textbf{$I > E$:} Mean integrity (0.877) exceeds mean energy
-  (0.766), confirming the system's conservative bias
+  (0.766), consistent with a conservative bias
   (\Cref{fig:ei-scatter}). The negative mean $V = -0.033$ (integrity
   surplus) is consistent with this.
 \item \textbf{Low entropy:} Mean $S = 0.082$ with strong decay ($\mu
   = 0.8$) indicates effective uncertainty management.
 \item \textbf{Coherence at 0.49:} The observed mean $C = 0.483$
-  (\Cref{fig:coherence-hist}) confirms
-  Remark~\ref{rem:operating-range}---the system honestly reports
-  near-midpoint coherence rather than inflating the signal.
+  (\Cref{fig:coherence-hist}) is consistent with
+  Remark~\ref{rem:operating-range}: coherence sits near the
+  midpoint for every agent, so it barely separates them.
 \item \textbf{$V$ confined to $[-0.1, 0.1]$:} 100\% of active agents
   have $V$ within $[-0.089, 0.007]$ (\Cref{fig:sv-scatter}), validating
   the damping analysis.
@@ -1649,7 +1674,7 @@ of the dynamics:
 \includegraphics[width=\columnwidth]{fig1_ei_scatter}
 \caption{Energy--Integrity scatter plot for 75 active agents, colored by
 dynamical regime. Nearly all agents lie above the $I = E$ diagonal,
-confirming the system's conservative bias ($\bar{V} < 0$). Point size
+consistent with a conservative bias ($\bar{V} < 0$). Point size
 reflects log update count.}
 \label{fig:ei-scatter}
 \end{figure}
@@ -1668,7 +1693,8 @@ Entropy remains low ($S < 0.20$) due to strong decay $\mu = 0.8$.}
 \includegraphics[width=\columnwidth]{fig3_coherence_hist}
 \caption{Distribution of coherence $C(V)$ across active agents. The mean
 $\bar{C} = 0.483$ lies near the theoretical midpoint ($C = 0.5$),
-consistent with small $|V|$ and the honest-reporting principle.}
+consistent with small $|V|$. The narrow spread means coherence
+barely separates agents.}
 \label{fig:coherence-hist}
 \end{figure}
 
@@ -1693,8 +1719,8 @@ Divergence & 29 & .706 & .770 & .100 & .496 \\
 \end{tabular}
 \end{table}
 
-The regime profiles (\Cref{fig:regime-profiles}) show clear
-separation: convergent agents have the highest integrity and lowest
+The regime profiles (\Cref{fig:regime-profiles}) differ in
+integrity and entropy, though barely in coherence: convergent agents have the highest integrity and lowest
 entropy; divergent agents have the lowest integrity and highest
 entropy. Coherence is slightly
 higher in the divergent regime ($\bar{C} = 0.496$) because these
@@ -1834,8 +1860,8 @@ different inputs than the legacy operational form
 (\Cref{eq:coherence}): the grounded form computes a
 class-conditional distance from $(E,I,S)_{\text{healthy}}(c)$,
 while the legacy form maps $V$ through $\tanh$. The choice of
-coherence formula therefore has consequences at the gating layer,
-not just on the raw value reported. We quantify this directly by
+coherence formula can therefore change gating labels, not just the
+raw value reported. We quantify this directly by
 re-running the basin-classification step on a counterfactual in
 which the grounded form replaces the legacy form on the same
 production state vectors.
@@ -1908,21 +1934,21 @@ Watcher   &    0 &  67 &   0 \\
 \end{tabular}
 \end{table}
 
-\textbf{Interpretation.} The result is empirical evidence that the
-choice of coherence formula has substantial governance-decision
-consequences---the formula change is not a cosmetic relabeling
-even when both quantities live in $[0,1]$. The flip rates of
-$15$--$33\%$ are far above what could be attributed to formula
-noise; they reflect the structural difference between a fleet-wide
-$\tanh$ of $V$ and a class-conditional manifold distance from each
-class's empirically measured healthy operating point.
+\textbf{Interpretation.} The formula change is not a cosmetic
+relabeling even when both quantities live in $[0,1]$: it changes
+basin labels for $15$--$33\%$ of rows per class. Much of that is
+mechanical. The legacy form is nearly constant (about $0.49$ for
+every agent; \Cref{sec:experiments}), so substituting any varying
+score moves basins. The rest reflects the structural difference
+between a fleet-wide $\tanh$ of $V$ and a class-conditional
+distance from each class's measured healthy operating point.
 
 The flip direction is informative. The dominant transition is into
 the \texttt{low} basin: agents that the production server
 classified as healthy (or borderline) under the fleet-wide form
 are classified as breaching at least one bound under the
-class-conditional grounded form. This is the gating-layer
-footprint of the homogenization-failure-mode argument of
+class-conditional grounded form. This is consistent with
+the homogenization-failure-mode argument of
 \Cref{sec:heterogeneity}: a fleet-wide constant spanning the
 worst-case envelope is, by construction, permissive relative to
 per-class envelopes, and the flip data quantifies how often that
@@ -1949,137 +1975,6 @@ alongside the calibration script. Running it against the
 production database reproduces the per-class breakdown; running
 with \texttt{-{}-csv} produces a row-level dump for further
 analysis.
-
-% ───────────────────────────────────────────────────────────
-\subsection{Audit-Log Evidence for Class-Conditional Grounding}
-\label{sec:audit-log-evidence}
-
-The counterfactual of \Cref{sec:verdict-counterfactual} establishes
-that the coherence formula choice has material gating consequences,
-but it measures divergence between the two formulas rather than
-correspondence with labelled outcomes. The governance Postgres instance
-records a richer signal in \texttt{audit.outcome\_events}: labelled
-\texttt{trajectory\_validated} outcomes whose EISV state at the time of
-classification is also stored. We report a direct discriminative test
-of that signal here.\footnote{%
-  Reproducibility: \texttt{psql -d governance -f
-  scripts/audits/legacy\_coherence\_d.sql} re-runs the full query
-  against any governance instance with the audit schema. Numbers shift
-  as the corpus grows; the structural finding ($S$ and $\phi$ large
-  $d$; legacy coherence negligible $d$) is stable across the rolling
-  30-day windows we have observed.}
-
-\textbf{Setup.} We query \texttt{audit.outcome\_events} for
-\texttt{trajectory\_validated} outcomes in a 30-day window ending
-2026-05-01, restricting to rows with non-null \texttt{eisv\_e}. The
-sample contains $n_{\text{good}} = 22{,}740$ and $n_{\text{bad}} = 580$.
-For each EISV component and for the deployed legacy coherence value
-(\Cref{sec:coherence}), we compute Cohen's~$d$ with sign convention:
-positive $d$ means bad outcomes have higher values.
-
-\textbf{Result.} \Cref{tab:audit-d} reports effect sizes. The state
-coordinates $S$, $\phi$, and $E$ carry large or medium effect sizes
-($|d| \geq 0.54$). The legacy $\tanh$-of-$V$ coherence achieves
-$d = 0.133$---negligible by any conventional threshold. Its means are
-$0.490$ (good) vs.\ $0.491$ (bad): indistinguishable in production.
-
-\begin{table}[htbp]
-\centering\small
-\caption{EISV component discriminative power on
-  \texttt{trajectory\_validated} outcomes, governance audit log snapshot
-  2026-05-01 (last 30 days). $n_{\text{good}} = 22{,}740$;
-  $n_{\text{bad}} = 580$. Cohen's~$d$: positive = bad outcomes have
-  higher value; $|d| < 0.2$ negligible, $0.2$--$0.5$ small,
-  $0.5$--$0.8$ medium, $|d| > 0.8$ large.}
-\label{tab:audit-d}
-\begin{tabular}{@{}llr@{}}
-\toprule
-\textbf{Component} & \textbf{Effect} & $d$ \\
-\midrule
-$E$                           & medium     & $-0.542$ \\
-$I$                           & small      & $-0.289$ \\
-$S$                           & large      & $+0.874$ \\
-$V$                           & small      & $-0.326$ \\
-$\phi$                        & large      & $-0.860$ \\
-Legacy coherence ($\tanh\,V$) & negligible & $+0.133$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Per-regime breakdown.} The fleet-aggregate $d_S = +0.874$
-conceals a regime-dependent directional inversion that provides direct
-empirical support for the class-conditional reformulation of
-\Cref{sec:class-calibration}. \Cref{tab:audit-regime} reports per-regime
-means for $S$, $\phi$, and legacy coherence.
-
-In CONVERGENCE, bad outcomes have \emph{lower} $S$ than good outcomes
-($0.140$ vs.\ $0.172$): the signal is premature lock-in on the wrong
-answer. In DIVERGENCE, EXPLORATION, and TRANSITION, the direction
-reverses---bad outcomes have \emph{higher} $S$ ($0.310$ vs.\ $0.273$,
-$0.333$ vs.\ $0.251$, $0.325$ vs.\ $0.271$ respectively): the signal
-is runaway uncertainty. A single fleet-wide $S$ threshold gates the
-wrong direction in at least one regime; class-conditional gating with
-regime-aware healthy operating points is what the data is asking for
-(\Cref{sec:heterogeneity}). Legacy coherence is flat (${\approx}0.49$)
-across every regime $\times$ outcome cell, confirming that the
-negligible fleet-aggregate $d$ is not an artefact of inter-regime
-cancellation.
-
-\begin{table}[htbp]
-\centering\small
-\caption{Per-regime means of $S$, $\phi$, and legacy coherence, broken
-  down by outcome label. In CONVERGENCE, bad outcomes have \emph{lower}
-  $S$ (premature lock-in); in DIVERGENCE, EXPLORATION, and TRANSITION,
-  bad outcomes have \emph{higher} $S$ (runaway uncertainty). Legacy
-  coherence is flat across all cells. Same sample as
-  \Cref{tab:audit-d}.}
-\label{tab:audit-regime}
-\begin{tabular}{@{}llrrrr@{}}
-\toprule
-\textbf{Regime} & \textbf{Bad?} & $n$ & $S$ & $\phi$ & Leg.\ coh. \\
-\midrule
-CONVERGENCE  & No  & $11{,}937$ & 0.172 & 0.199 & 0.488 \\
-CONVERGENCE  & Yes &        $99$ & 0.140 & 0.169 & 0.490 \\
-DIVERGENCE   & No  &  $3{,}904$ & 0.273 & 0.194 & 0.492 \\
-DIVERGENCE   & Yes &       $179$ & 0.310 & 0.146 & 0.490 \\
-EXPLORATION  & No  &  $6{,}245$ & 0.251 & 0.193 & 0.491 \\
-EXPLORATION  & Yes &       $231$ & 0.333 & 0.137 & 0.492 \\
-TRANSITION   & No  &       $654$ & 0.271 & 0.180 & 0.488 \\
-TRANSITION   & Yes &        $71$ & 0.325 & 0.158 & 0.491 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Interpretation.} The empirically broken piece is the legacy
-$\tanh$-of-$V$ coherence---the aggregation function currently in
-deployment. The state coordinates it consumes are not the failure:
-$d_S = +0.874$, $d_\phi = -0.860$, and $d_E = -0.542$ establish that
-$S$, $\phi$, and $E$ carry substantial predictive signal for labelled
-trajectory outcomes. The antithesis claim that the EISV four-dimensional
-cut is overhead is refuted by these effect sizes. Manifold-coherence is
-the empirically required replacement for the verdict-mapping aggregation
-function, not a theoretical preference (\Cref{sec:heterogeneity}).
-
-\textbf{Two-leg evidence structure.} This subsection constitutes
-\emph{leg~(a)}: a retrospective audit-log test showing that the state
-coordinates are load-bearing and the published aggregation function is
-not. \emph{Leg~(b)} is a prospective bare-vs.-EISV kernel-tuning lane
-comparison measuring $\Delta$correctness and $\Delta$speed from the
-Humanity's Last Hackathon bake-off; the operator will insert those
-numbers in the placeholder below before this draft is merged.
-
-% <HLH-LANE-DATA>
-% Placeholder: operator to paste Humanity's Last Hackathon (HLH)
-% bare-vs.-EISV lane bake-off results here before merging.
-%
-% Expected content:
-%   - Table or paragraph reporting Δcorrectness and Δspeed for the
-%     bare (no-governance) lane vs. the EISV-governed lane, sourced
-%     from the hlh-codex-workflow repo (not yet pushed to GitHub).
-%   - Methodology notes: task distribution, judge, sample size n.
-%   - Framing: this is leg (b) of the two-leg evidence structure;
-%     leg (a) is the audit-log retrospective above.
-% </HLH-LANE-DATA>
 
 \subsection{Limits of the Snapshot}
 \label{sec:limits-snapshot}
@@ -2108,7 +2003,7 @@ our empirical claims:
   from a 30-day window ending April~18,~2026, during which the
   population grew from 903 to 3{,}286 registered identities.
   The February~20 snapshot was taken against the v5 SQLite governance
-  store, which was retired during the January~2026 PostgreSQL
+  store, which was later retired in the PostgreSQL
   migration; the snapshot is preserved as historical record and is
   not reproducible against the current schema. Per-class envelopes
   and the verdict counterfactual were run against the post-migration
@@ -2297,8 +2192,9 @@ three practical consequences:
   Inflating measurements would mask the very drift the system is
   designed to detect.
 \item \textbf{Operator trust:} Dashboard values correspond to actual
-  system state. An operator seeing $C = 0.49$ knows the agent is
-  operating conservatively, not that a scaling factor was applied.
+  system state. An operator seeing $C = 0.49$ knows it is the raw
+  value, not a rescaled one, although at this operating range the
+  raw value says little about any individual agent.
 \item \textbf{Contraction validity:} The stability proofs in
   \Cref{sec:contraction} depend on the true state. Transforming
   measurements would invalidate the contraction analysis by
@@ -2410,6 +2306,12 @@ the same infrastructure.
 \subsection{Limitations}
 
 \begin{enumerate}
+\item The deployed coordinates are computed by tier-3 heuristic
+  estimators; the information-theoretic definitions of
+  \Cref{sec:grounding} are target semantics, and the tier-1 and
+  tier-2 estimators are not implemented. No result in this paper
+  grades the coordinates or either coherence form against
+  independently labelled outcomes.
 \item The coherence function $\cv$ creates a nonlinear feedback
   loop whose gain depends on the operating point (maximum at
   $V = 0$, vanishing at $|V| \gg 0$). The contraction analysis
@@ -2437,17 +2339,20 @@ the same infrastructure.
 \label{sec:conclusion}
 
 This paper presented two structural reframings of UNITARES.
-First, the EISV state vector is grounded information-theoretically:
-each coordinate is a Shannon entropy, mutual information,
-variational free energy, or KL/manifold distance, measured by a
-tiered computation recipe and normalized by a provenance-tagged
-scale constant. Second, fleet-wide normalization is rejected as
-the wrong target; scale constants and healthy operating points
-become functions of an agent class, keyed on existing identity
-tags. Together these turn UNITARES from a phenomenological
-dynamical system named after thermodynamic quantities into a
-class-conditional information-theoretic governance framework
-whose coordinates can be derived rather than guessed.
+First, the EISV state vector is given information-theoretic
+target semantics: each coordinate is specified as a Shannon
+entropy, mutual information, variational free energy, or
+KL/manifold distance, to be measured by a tiered computation
+recipe and normalized by a provenance-tagged scale constant. The
+deployed system computes all four coordinates with the tier-3
+heuristic estimators; the higher tiers are specified but not
+implemented. Second, fleet-wide normalization is rejected as the
+wrong target; scale constants and healthy operating points become
+functions of an agent class, keyed on existing identity tags.
+Together these define a path from a phenomenological dynamical
+system to a class-conditional framework whose coordinates could be
+derived rather than guessed. This paper specifies that path; it
+does not complete it.
 
 The pipeline-ordering migration mechanism
 (\Cref{sec:pipeline-ordering}) is a methodological contribution
@@ -2458,9 +2363,11 @@ and presentation-producing pipeline stages. We argue this
 separation is worth doing on its own merits, independent of any
 specific migration.
 
-Stability of the dynamics is preserved under the grounded
-reformulation, with full proof in \Cref{app:contraction-proof}.
-Production deployment statistics from 903~agents over 69~days
+The contraction certificate holds for the deployed dynamics,
+with full proof in \Cref{app:contraction-proof}; a deployment
+that consumes a grounded coherence must be re-certified
+(\Cref{rem:phase3-contraction}).
+Production deployment statistics from 903~agents over a 69-day observation window
 appear in \Cref{sec:experiments}; \Cref{sec:phase-2-measurement}
 reports a first class-conditional measurement for the
 manifold-coherence path, and

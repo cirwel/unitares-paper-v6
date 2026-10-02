@@ -7,31 +7,58 @@ authors:
     given-names: Kenny
     affiliation: "CIRWEL Systems"
     orcid: "https://orcid.org/0009-0006-7544-2374"
-date-released: 2026-04-24
-version: "v6.9.1"
+date-released: 2026-10-02
+version: "v6.9.3"
 url: "https://github.com/CIRWEL/unitares-paper-v6"
 license: CC-BY-4.0
 abstract: >
-  We present UNITARES, a governance framework for heterogeneous fleets of
-  autonomous AI agents. Each agent carries a four-dimensional state vector
-  intended to support continuous governance rather than discrete after-the-fact
-  filtering. The central design constraint is heterogeneity: the populations
-  we govern include embodied agents with sensor-driven state, persistent
-  autonomous services, session-bounded coding assistants, and ephemeral parser
-  agents.
+  UNITARES is a runtime governance layer for heterogeneous AI-agent
+  fleets. It tracks continuous agent state, calibrates by class, detects
+  drift, and issues governance interventions with auditable provenance.
+  Each agent carries a four-dimensional state vector x = (E, I, S, V)^T
+  updated on every check-in, intended to support continuous governance
+  rather than discrete after-the-fact filtering. Fleet-wide normalization
+  is the wrong target: the populations we govern — embodied agents with
+  sensor-driven state, persistent autonomous services, session-bounded
+  coding assistants, and ephemeral parser agents — do not share an output
+  modality, a tempo, or a healthy operating point.
 
-  UNITARES addresses this with two structural moves. First, it reinterprets
-  the EISV coordinates in information-theoretic terms: S as response-distribution
-  entropy, I as context-response mutual information, E as negative variational
-  free energy or a resource-rate proxy, and V as an accumulated free-energy
-  residual. Second, it makes normalization class-conditional: scale constants
-  and healthy operating points are functions of an agent class keyed on existing
-  identity tags.
+  UNITARES addresses this with two structural moves. First, it specifies
+  information-theoretic target semantics for the EISV coordinates: S as
+  response-distribution entropy, I as context-response mutual information,
+  E as negative variational free energy, and V as an accumulated free-
+  energy residual. These are targets. The deployed system computes all
+  four coordinates with tier-3 heuristic estimators; the higher-tier
+  estimators that would compute them as specified are not yet implemented.
+  Second, it makes normalization class-conditional: scale constants and
+  healthy operating points are functions of an agent class keyed on
+  existing identity tags, with fleet-wide defaults retained only as
+  fallback behavior.
 
-  Because UNITARES was already deployed, re-grounding the coordinates raised
-  a live-systems problem in addition to a mathematical one. We introduce a
-  pipeline-ordering migration mechanism that preserves governance behavior
-  while allowing grounded values to populate canonical response fields.
+  Because UNITARES was already deployed, re-grounding the coordinates
+  raised a live-systems problem in addition to a mathematical one. We
+  introduce a pipeline-ordering migration mechanism that separates
+  decision-producing from presentation-producing pipeline stages so a
+  deployed governance framework can acquire new coordinate semantics
+  without breaking live behavior; we argue this mechanism generalizes to
+  any deployed agent framework facing a semantic-coordinate change. A
+  contraction certificate (Appendix B) holds for the deployed dynamics; a
+  deployment that consumes a grounded coherence must be re-certified
+  (Remark 5.1).
+
+  We illustrate the framework with a production deployment snapshot from
+  February 20, 2026, covering 903 registered agents and 75 active agents.
+  A verdict counterfactual on a 30-day production slice (N = 13,310) shows
+  that 28.9% of basin assignments would flip under class-conditional
+  grounded coherence, with flip rates ranging 15–33% per class and a
+  strong directional bias into the low basin. The flips are largely
+  mechanical: the legacy coherence is nearly constant (about 0.49 for
+  every agent), so substituting any varying score moves basins. The
+  counterfactual shows that the formula choice changes gating labels; it
+  does not show that the new labels are correct, since no outcome grades
+  either form. A first per-class calibration of the manifold-coherence
+  path is reported here; the remaining scale constants and higher-tier
+  estimators (logprob and multi-sample) are deferred to subsequent work.
 keywords:
   - autonomous governance
   - information theory
