@@ -123,7 +123,7 @@ class-conditional calibration, AI safety
 \vspace{1ex}
 \noindent\fbox{\parbox{0.97\columnwidth}{\small
 \textbf{Reading aids.} We introduce four terms up front:
-\emph{Variational free energy} ($-F$, used as the $E$ coordinate):
+\emph{Variational free energy} ($-F$, the target semantics of the $E$ coordinate):
 the Free-Energy-Principle quantity measuring how well an agent's
 predictions match outcomes; high $E$ = low surprise.
 \emph{Cosmological soup}: the failure mode of averaging a
@@ -273,9 +273,11 @@ Lohmiller and Slotine~\cite{lohmiller1998contraction} established
 contraction analysis as a tool for nonlinear stability, later
 extended to Riemannian metrics~\cite{slotine2003modular}. We adapt
 this framework to the governance domain, where the ``plant'' is
-an agent's state vector rather than a physical system. Contraction
-is preserved by the grounded reformulation but is no longer the
-headline contribution; see \Cref{app:contraction-proof}.
+an agent's state vector rather than a physical system. The
+contraction certificate covers the deployed dynamics; a grounded
+coherence requires re-certification (\Cref{rem:phase3-contraction}),
+and contraction is no longer the headline contribution; see
+\Cref{app:contraction-proof}.
 
 \paragraph{AI Safety and Governance.}
 Constitutional AI~\cite{bai2022constitutional} and
@@ -383,8 +385,9 @@ We refer to the failure mode of fleet-wide normalization as
 entropic, with no class structure and no distinguishability between
 populations whose dynamics are genuinely different. The
 information-theoretic grounding presented in
-\Cref{sec:grounding} resolves the metaphor problem in the
-coordinates themselves; the class-conditional calibration
+\Cref{sec:grounding} specifies how to resolve the metaphor problem
+in the coordinates themselves (the deployed estimators remain
+heuristic); the class-conditional calibration
 presented in \Cref{sec:class-calibration} resolves the
 homogenization problem at the normalization layer. These are
 distinct contributions and either can fail independently.
@@ -619,9 +622,9 @@ deployment.
 The \eisv\ system presented in \Cref{sec:dynamics} specifies a
 coupled dynamical signal for governance decisions but does not
 specify what each coordinate measures. This section supplies the
-information-theoretic semantics: each coordinate becomes a
-computable quantity with a tiered estimation recipe and a
-provenance tag, without changing the dynamics of
+information-theoretic target semantics: each coordinate is given
+a definition with a tiered estimation recipe and a provenance tag,
+of which only the heuristic tier~3 is deployed, without changing the dynamics of
 \Cref{sec:equations}.
 
 \begin{remark}[What stays, what changes]
@@ -629,7 +632,7 @@ The ODE structure in \Cref{eq:dE,eq:dI,eq:dS,eq:dV}, the contraction
 analysis in \Cref{sec:contraction}, the governor in
 \Cref{sec:governor}, and the verdict thresholds in \Cref{eq:phi} are
 all preserved. Grounding changes what $E$, $I$, $S$, and
-$\cv$ \emph{are}; it does not change what the governance surface
+$\cv$ are \emph{specified to measure}; it does not change what the governance surface
 \emph{does}.
 \end{remark}
 
@@ -766,7 +769,7 @@ unchanged. No payload or threshold change is required.
 
 \paragraph{$C$---Coherence.}
 We replace the hand-shaped $\tanh$ in \Cref{eq:coherence} with one of
-two equivalent grounded forms. The information-theoretic form is
+two related grounded forms. The information-theoretic form is
 \begin{equation}
   C = \exp\!\left(-D_{\mathrm{KL}}(q_{\text{now}} \,\|\, q_{\text{ref}})\right)
   \label{eq:C-KL}
@@ -779,8 +782,11 @@ manifold (Lyapunov) form is
   \Delta &= (E, I, S) - (E, I, S)_{\text{healthy}}
   \label{eq:C-manifold}
 \end{align}
-The two are equivalent under a Gaussian approximation of the state
-distribution around the healthy operating point. The manifold form
+The two are related, not equivalent: the KL form compares response
+distributions, the manifold form compares EISV coordinates, and they
+coincide only under strong assumptions (for example, a Gaussian
+state distribution whose sufficient statistics are those
+coordinates). The manifold form
 ships first because it requires only the existing $\eisv$
 coordinates; the KL form requires an empirically calibrated
 reference.
@@ -868,8 +874,9 @@ frameworks. Class-conditional grounding
 that does.
 
 The grounded reformulation of
-\Cref{sec:grounding} preserves stability \emph{within each agent
-class}. The dynamics
+\Cref{sec:grounding} is designed to preserve stability
+\emph{within each agent class}, subject to the per-class
+re-certification described below. The dynamics
 $\dot{\eisv} = f(\eisv, t)$ are unchanged; only the meaning of
 the coordinates and the values of the scale constants change.
 The contraction certificate of \Cref{thm:contraction} relies on
@@ -1572,8 +1579,8 @@ real system-level concerns rather than hypothetical ones.
 
 The UNITARES framework is deployed as a Model Context Protocol (MCP)
 server that provides governance services to autonomous AI agents. Each
-agent connects via standard MCP transport and receives governance
-a verdict at each check-in. The system has been in continuous production
+agent connects via standard MCP transport and receives a
+governance verdict at each check-in. The system has been in continuous production
 since November 2025.
 
 \begin{table}[htbp]
@@ -1590,7 +1597,7 @@ and reproducibility caveat.}
 Registered agents & 903 \\
 Active ($>5$ updates) & 75 \\
 Max updates (single agent) & 48{,}668 \\
-Deployment duration & 69 days \\
+Observation window & 69 days \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1648,7 +1655,7 @@ These values are consistent with several qualitative predictions
 of the dynamics:
 \begin{enumerate}
 \item \textbf{$I > E$:} Mean integrity (0.877) exceeds mean energy
-  (0.766), confirming the system's conservative bias
+  (0.766), consistent with a conservative bias
   (\Cref{fig:ei-scatter}). The negative mean $V = -0.033$ (integrity
   surplus) is consistent with this.
 \item \textbf{Low entropy:} Mean $S = 0.082$ with strong decay ($\mu
@@ -1667,7 +1674,7 @@ of the dynamics:
 \includegraphics[width=\columnwidth]{fig1_ei_scatter}
 \caption{Energy--Integrity scatter plot for 75 active agents, colored by
 dynamical regime. Nearly all agents lie above the $I = E$ diagonal,
-confirming the system's conservative bias ($\bar{V} < 0$). Point size
+consistent with a conservative bias ($\bar{V} < 0$). Point size
 reflects log update count.}
 \label{fig:ei-scatter}
 \end{figure}
@@ -1686,7 +1693,8 @@ Entropy remains low ($S < 0.20$) due to strong decay $\mu = 0.8$.}
 \includegraphics[width=\columnwidth]{fig3_coherence_hist}
 \caption{Distribution of coherence $C(V)$ across active agents. The mean
 $\bar{C} = 0.483$ lies near the theoretical midpoint ($C = 0.5$),
-consistent with small $|V|$ and the honest-reporting principle.}
+consistent with small $|V|$. The narrow spread means coherence
+barely separates agents.}
 \label{fig:coherence-hist}
 \end{figure}
 
@@ -1852,8 +1860,8 @@ different inputs than the legacy operational form
 (\Cref{eq:coherence}): the grounded form computes a
 class-conditional distance from $(E,I,S)_{\text{healthy}}(c)$,
 while the legacy form maps $V$ through $\tanh$. The choice of
-coherence formula therefore has consequences at the gating layer,
-not just on the raw value reported. We quantify this directly by
+coherence formula can therefore change gating labels, not just the
+raw value reported. We quantify this directly by
 re-running the basin-classification step on a counterfactual in
 which the grounded form replaces the legacy form on the same
 production state vectors.
@@ -1926,21 +1934,21 @@ Watcher   &    0 &  67 &   0 \\
 \end{tabular}
 \end{table}
 
-\textbf{Interpretation.} The result is empirical evidence that the
-choice of coherence formula has substantial governance-decision
-consequences---the formula change is not a cosmetic relabeling
-even when both quantities live in $[0,1]$. The flip rates of
-$15$--$33\%$ are far above what could be attributed to formula
-noise; they reflect the structural difference between a fleet-wide
-$\tanh$ of $V$ and a class-conditional manifold distance from each
-class's empirically measured healthy operating point.
+\textbf{Interpretation.} The formula change is not a cosmetic
+relabeling even when both quantities live in $[0,1]$: it changes
+basin labels for $15$--$33\%$ of rows per class. Much of that is
+mechanical. The legacy form is nearly constant (about $0.49$ for
+every agent; \Cref{sec:experiments}), so substituting any varying
+score moves basins. The rest reflects the structural difference
+between a fleet-wide $\tanh$ of $V$ and a class-conditional
+distance from each class's measured healthy operating point.
 
 The flip direction is informative. The dominant transition is into
 the \texttt{low} basin: agents that the production server
 classified as healthy (or borderline) under the fleet-wide form
 are classified as breaching at least one bound under the
-class-conditional grounded form. This is the gating-layer
-footprint of the homogenization-failure-mode argument of
+class-conditional grounded form. This is consistent with
+the homogenization-failure-mode argument of
 \Cref{sec:heterogeneity}: a fleet-wide constant spanning the
 worst-case envelope is, by construction, permissive relative to
 per-class envelopes, and the flip data quantifies how often that
@@ -1995,7 +2003,7 @@ our empirical claims:
   from a 30-day window ending April~18,~2026, during which the
   population grew from 903 to 3{,}286 registered identities.
   The February~20 snapshot was taken against the v5 SQLite governance
-  store, which was retired during the January~2026 PostgreSQL
+  store, which was later retired in the PostgreSQL
   migration; the snapshot is preserved as historical record and is
   not reproducible against the current schema. Per-class envelopes
   and the verdict counterfactual were run against the post-migration
@@ -2298,6 +2306,12 @@ the same infrastructure.
 \subsection{Limitations}
 
 \begin{enumerate}
+\item The deployed coordinates are computed by tier-3 heuristic
+  estimators; the information-theoretic definitions of
+  \Cref{sec:grounding} are target semantics, and the tier-1 and
+  tier-2 estimators are not implemented. No result in this paper
+  grades the coordinates or either coherence form against
+  independently labelled outcomes.
 \item The coherence function $\cv$ creates a nonlinear feedback
   loop whose gain depends on the operating point (maximum at
   $V = 0$, vanishing at $|V| \gg 0$). The contraction analysis
@@ -2353,7 +2367,7 @@ The contraction certificate holds for the deployed dynamics,
 with full proof in \Cref{app:contraction-proof}; a deployment
 that consumes a grounded coherence must be re-certified
 (\Cref{rem:phase3-contraction}).
-Production deployment statistics from 903~agents over 69~days
+Production deployment statistics from 903~agents over a 69-day observation window
 appear in \Cref{sec:experiments}; \Cref{sec:phase-2-measurement}
 reports a first class-conditional measurement for the
 manifold-coherence path, and
