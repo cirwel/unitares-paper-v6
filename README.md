@@ -4,9 +4,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19647159.svg)](https://doi.org/10.5281/zenodo.19647159)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Latest: paper-v6.9.1](https://img.shields.io/badge/latest-paper--v6.9.1-brightgreen.svg)](https://github.com/CIRWEL/unitares-paper-v6/releases/latest)
+[![Latest: paper-v6.9.1](https://img.shields.io/badge/latest-paper--v6.9.3-brightgreen.svg)](https://github.com/CIRWEL/unitares-paper-v6/releases/latest)
 
-- 📄 [`unitares-v6.pdf`](./unitares-v6.pdf) — the paper (30 pages, latest tag [`paper-v6.9.1`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.1))
+- 📄 [`unitares-v6.pdf`](./unitares-v6.pdf) — the paper (33 pages, latest tag [`paper-v6.9.3`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.3))
 - 📝 [`unitares-v6.tex`](./unitares-v6.tex) — LaTeX source
 - 🖼 [`figures/`](./figures/) — 6 figures from deployment data (Feb 20, 2026 snapshot; Apr 18, 2026 30-day window)
 - 🗒 [Release history](https://github.com/CIRWEL/unitares-paper-v6/releases) — per-version notes and frozen PDFs
@@ -23,13 +23,15 @@ Governance of autonomous AI agents is usually assembled from output filters, das
 
 The paper makes two structural moves:
 
-1. **Information-theoretic grounding of the EISV state vector** — `S` as Shannon entropy of the response distribution, `I` as mutual information between context and response, `E` as negative variational free energy, `V` as accumulated free-energy residual. Each coordinate ships with a tiered computation recipe (logprob, multi-sample, heuristic) and a provenance-tagged scale constant.
+1. **Information-theoretic target semantics for the EISV state vector** (the deployed system computes all four coordinates with tier-3 heuristic estimators; the higher tiers are specified, not implemented) — `S` as Shannon entropy of the response distribution, `I` as mutual information between context and response, `E` as negative variational free energy, `V` as accumulated free-energy residual. Each coordinate ships with a tiered computation recipe (logprob, multi-sample, heuristic) and a provenance-tagged scale constant.
 
 2. **Class-conditional calibration** — scale constants and healthy operating points are functions of an agent class, keyed on existing identity tags, with fleet-wide defaults retained only as fallback. Phase 2 measurement on five production classes (Lumen, Sentinel, Vigil, Watcher, default) over a 30-day window is reported in §11.5; per-class manifold radii span a 3.3× range, directly contradicting the fleet-wide assumption.
 
 ## The headline finding
 
 A verdict counterfactual on a 13,310-row production slice (§11.6) shows that **28.9% of governance basin assignments flip** when the grounded class-conditional coherence replaces the legacy fleet-wide `tanh` form on the same state vectors. Flip rates range 15–33% per class, with a dominant directional bias into the `low` basin — the fleet-wide form was systematically permissive relative to tighter class envelopes. The homogenization-failure-mode argument has first-order consequences at the gating layer, not only at the reported-value layer.
+
+Much of the flip rate is mechanical: the legacy coherence is nearly constant (about 0.49 for every agent), so substituting any varying score moves basins. The counterfactual shows that the formula choice changes gating labels, not that the new labels are correct.
 
 This is a *static* reclassification measurement: the same state vectors, two coherence formulas, count the disagreements. It does not depend on the multi-agent coupling machinery of §sec:network (which v6.7 reframed as a theoretical extension rather than a deployed mechanism — see *Version history* below), and its conclusion survives that correction intact.
 
@@ -45,7 +47,7 @@ The §Multi-Agent Network section (§sec:network, eq:network, thm:network) prese
 
 ## Reading aids
 
-- **Variational free energy** (`−F`, used as the `E` coordinate) — the Free-Energy-Principle quantity measuring how well an agent's predictions match outcomes; high `E` = low surprise.
+- **Variational free energy** (`−F`, the target semantics of the `E` coordinate) — the Free-Energy-Principle quantity measuring how well an agent's predictions match outcomes; high `E` = low surprise.
 - **Cosmological soup** — the failure mode of averaging a heterogeneous agent fleet into a single state distribution, in which no population structure survives normalization.
 - **Manifold coherence** (`C = 1 − ‖Δ‖₂ / ‖Δ‖_max`) — distance from the agent class's healthy operating point, used as a class-conditional replacement for the legacy `tanh`-of-`V` coherence.
 - **Basin flip** — a change in governance-basin assignment (`high` / `boundary` / `low`) when the same state vector is classified under different coherence formulas.
@@ -76,6 +78,7 @@ Required packages: `amsmath`, `amssymb`, `mathtools`, `bm`, `graphicx`, `booktab
 
 Per-release notes and frozen PDFs are on the [GitHub releases page](https://github.com/CIRWEL/unitares-paper-v6/releases). Headline deltas:
 
+- **v6.9.3** — claim correction: the abstract, model section and conclusion now say the information-theoretic definitions are target semantics and the deployed estimators are tier-3 heuristics; the stability claim covers the deployed dynamics only; the 28.9% counterfactual is described as largely mechanical (the legacy coherence is nearly constant) and as showing label changes, not correctness; production start corrected to November 2025.
 - **v6.8** — operational-honesty bump: §12.4 adds a paragraph on the 2026-04-20 KG retrieval rebuild (pre-rebuild semantic scores sat at noise floor; fleet-learning claims now bounded by that era); §12.5 adds item 6 explicitly caveating retrieval-infrastructure and the PR-#54 auto-ephemeral write-bug. Grounded EISV counterfactual unaffected (inputs are `core.agent_state`, not KG content).
 - **v6.7** — drift correction: runtime removed the CIRS v2 neighbor-pressure coupling on 2026-04-17; paper caught up by excising §Multi-Agent Coordination and reframing §Multi-Agent Network as a theoretical extension. §11.6 headline finding unaffected.
 - **v6.6** — added §11.7 identity-system-maturity disclosure; added identity hardening track to §14.5 future work.
@@ -93,11 +96,11 @@ Per-release notes and frozen PDFs are on the [GitHub releases page](https://gith
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.19647159},
   url       = {https://doi.org/10.5281/zenodo.19647159},
-  version   = {v6.9.1}
+  version   = {v6.9.3}
 }
 ```
 
-The concept DOI above resolves to the latest version; each tagged release (`paper-v6.0` through `paper-v6.9.1`) has its own version DOI.
+The concept DOI above resolves to the latest version; each tagged release (`paper-v6.0` through `paper-v6.9.3`) has its own version DOI.
 
 ## License
 
