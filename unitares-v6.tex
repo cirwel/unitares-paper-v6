@@ -46,7 +46,7 @@ of Heterogeneous Agent Fleets}
   \texttt{founder@cirwel.org}
 }
 
-\date{Version 6.9.3 --- October 2, 2026}
+\date{Version 6.9.4-draft --- October 12, 2026 (unpublished)}
 
 % ═══════════════════════════════════════════════════════════
 \begin{document}
@@ -87,9 +87,12 @@ presentation-producing pipeline stages so a deployed governance
 framework can acquire new coordinate semantics without breaking
 live behavior; we argue this mechanism generalizes to any
 deployed agent framework facing a semantic-coordinate change.
-A contraction certificate (\Cref{app:contraction-proof}) holds
-for the deployed dynamics; a deployment that consumes a grounded
-coherence must be re-certified (\Cref{rem:phase3-contraction}).
+A corrected contraction certificate (\Cref{app:contraction-proof})
+covers the printed fixed-parameter continuous vector field while
+trajectories remain in its stated domain and share exogenous inputs.
+It does not certify the implemented finite-step update or adaptive
+governor; a grounded coherence also requires re-certification
+(\Cref{rem:phase3-contraction}).
 
 We illustrate the framework with a production deployment snapshot from
 February 20, 2026, covering 903 registered agents and 75 active agents.
@@ -97,9 +100,10 @@ A verdict counterfactual on a 30-day production slice
 ($N = 13{,}310$) shows that $28.9\%$ of basin assignments would flip
 under class-conditional grounded coherence, with flip rates ranging
 $15$--$33\%$ per class and a strong directional bias into the
-\texttt{low} basin. The flips are largely mechanical: the legacy
-coherence is nearly constant (about $0.49$ for every agent), so
-substituting any varying score moves basins. The counterfactual
+\texttt{low} basin. The legacy coherence is nearly constant (about $0.49$ in the
+reported deployment). The replacement changes basin labels where
+its values cross the classifier's operative thresholds; variation
+alone does not imply a basin change. The counterfactual
 shows that the formula choice changes gating labels; it does not
 show that the new labels are correct, since no outcome grades
 either form. A first per-class calibration
@@ -108,13 +112,14 @@ constants and higher-tier estimators (logprob and multi-sample) are
 deferred to subsequent work.
 \end{abstract}
 
-\noindent\textit{Version note (6.9.3, October 2026).} This version
-states in the abstract, the model section and the conclusion what
-earlier versions said only in the body: the information-theoretic
-definitions are target semantics, and the deployed system computes
-all four coordinates with tier-3 heuristic estimators. It also
-qualifies the stability and counterfactual claims and corrects the
-production start date to November 2025.
+\noindent\textit{Version note (6.9.4-draft, October 2026; unpublished).}
+This revision corrects the contraction proof, states its domain,
+parameter and common-input conditions, and separates it from the
+implemented numerical update. It also corrects the stochastic,
+network and equilibrium claims and distinguishes the coherence
+transform's range from its observed concentration. Historical
+measurements are retained; their interpretation does not depend
+on a deployment stability certificate.
 
 \textbf{Keywords:} autonomous governance, information theory,
 variational free energy, heterogeneous multi-agent systems,
@@ -274,8 +279,10 @@ contraction analysis as a tool for nonlinear stability, later
 extended to Riemannian metrics~\cite{slotine2003modular}. We adapt
 this framework to the governance domain, where the ``plant'' is
 an agent's state vector rather than a physical system. The
-contraction certificate covers the deployed dynamics; a grounded
-coherence requires re-certification (\Cref{rem:phase3-contraction}),
+contraction certificate covers the printed fixed-parameter continuous
+field under explicit domain and input conditions; deployed updates
+and grounded coherence require separate analysis
+(\Cref{rem:phase3-contraction}),
 and contraction is no longer the headline contribution; see
 \Cref{app:contraction-proof}.
 
@@ -323,13 +330,13 @@ UNITARES's behavioral--epistemic drift vector (\Cref{sec:ethical-drift}) couples
 drift back into the governing equations rather than tracking it as an
 external metric.
 
-Control Barrier Functions (CBFs)~\cite{ames2019control} enforce
-forward invariance of safe sets for multi-agent systems. CBFs
-guarantee that the system remains within a safe region but do not
-provide convergence to a desired operating point. Contraction theory,
-by contrast, guarantees exponential convergence to a unique
-trajectory, a strictly stronger property that subsumes set invariance
-when the equilibrium lies within the safe set.
+Control Barrier Functions (CBFs)~\cite{ames2019control} establish
+forward invariance of specified safe sets under their feasibility
+and boundary conditions. Contraction bounds separation between
+trajectories; invariance determines whether trajectories remain in
+a set. These are distinct guarantees. Even an equilibrium inside
+a safe set and a contracting field do not imply that the set is
+invariant; a boundary condition or a region-specific proof is needed.
 
 \paragraph{Adaptive Control.}
 PID control is classical~\cite{astrom2008feedback}; our contribution
@@ -439,14 +446,13 @@ the requirement.
 
 \subsection{Why Heterogeneity Is the Differentiator}
 
-The contraction-theoretic stability result
-(\Cref{app:contraction-proof}) demonstrates that the EISV dynamics
-are well-behaved under standard control-theoretic conditions. That
-result is not the headline contribution. Stability of the dynamics
-is a property of any reasonable governance equation of this form;
-what distinguishes UNITARES is that the same dynamics describe a
-heterogeneous population without collapsing the classes that define
-them. The present framing makes that distinction explicit: the
+The contraction result (\Cref{app:contraction-proof}) bounds
+separation of trajectories for the printed continuous model under
+its stated assumptions. It is not a certificate for the deployed
+numerical update or for the quality of governance decisions.
+Class-conditional grounding addresses a separate question: how
+to describe a heterogeneous population without collapsing its classes.
+The present framing makes that distinction explicit: the
 contribution is the class-conditional grounding, not the
 dynamics-on-a-single-class.
 
@@ -568,14 +574,16 @@ operational form.
 
 \begin{remark}[Operating Range]
 \label{rem:operating-range}
-In production, the damping term $\delta V$ in \eqref{eq:dV} constrains
-$V$ to approximately $[-0.1, 0.1]$, yielding $C(V) \approx 0.49$; the
-empirical distribution is reported in \Cref{sec:experiments}. The
-narrow range near the coherence-function midpoint is the operational
-consequence of the damping analysis. It is also a limitation: a
-coherence that barely varies across agents carries little
-information for gating (\Cref{sec:experiments},
-\Cref{sec:verdict-counterfactual}).
+For unit gain and ceiling, $V \in [-0.1, 0.1]$ maps to
+$C(V) \in [0.450166\ldots, 0.549834\ldots]$. The deployment's
+observed concentration near $0.49$ (\Cref{sec:experiments}) is an
+empirical property of its input trajectory; the transform alone
+does not determine that center. Damping is part of the dynamics,
+but the evidence presented here does not isolate its causal
+contribution to the observed distribution. Assess this score's
+decision contribution against the deployed thresholds, separately
+from information retained in its variation
+(\Cref{sec:verdict-counterfactual}).
 \end{remark}
 
 \subsection{Adaptive Entropy Coupling}
@@ -838,84 +846,55 @@ updated accordingly.
 \section{Stability}
 \label{sec:contraction}
 
-Contraction~\cite{lohmiller1998contraction} means that any two
-trajectories of the system converge exponentially toward each
-other under a Riemannian metric $M$ at rate $\alpha_c > 0$; for
-UNITARES this implies governance trajectories forget their
-initial conditions and settle onto a unique equilibrium
-regardless of start state. The EISV dynamics of
-\Cref{sec:dynamics} are globally exponentially stable in this
-sense. Specifically, the system is contracting with rate
-$\alpha_c > 0$ under the metric
-$M = \operatorname{diag}(0.1, 0.2, 1.0, 0.08)$, whose diagonal
-weights reflect the relative scales of the four channels: $S$
-fluctuates fastest and is given unit weight, while $V$ is damped
-most and given the smallest weight (derivation in
-\Cref{app:contraction-proof}). The spectral abscissa of the
-linearized system at the equilibrium gives an actual rate
-$\alpha_c \approx 0.13$ at production parameters; a conservative
-Gershgorin argument establishes a strictly-less lower bound
-$\alpha_c \geq 0.019$ used only to make the stochastic and
-network bounds in \Cref{sec:stochastic,sec:network} worst-case
-conservative. Both certificates appear in
-\Cref{app:contraction-proof}.
+Contraction~\cite{lohmiller1998contraction} bounds the separation
+of trajectories driven by the same inputs. For the printed
+linear-I continuous vector field, \Cref{app:contraction-proof}
+proves a rate of $\alpha_c=0.019$ in the constant metric
+$M=\operatorname{diag}(0.1,0.2,1.0,0.08)$ using the fixed
+parameter set in Remark~\ref{rem:production-params}. Drift,
+complexity and $\Theta$ are exogenous and common to the two
+trajectories. The bound applies while both trajectories remain
+in the convex region
+$\mathcal D=[0,1]^2\times[0.001,1]\times[-1,1]$:
+\begin{equation}
+ \|x_1(t)-x_2(t)\|_M
+ \le e^{-0.019t}\|x_1(0)-x_2(0)\|_M.
+ \label{eq:continuous-distance-bound}
+\end{equation}
+This is an incremental continuous-time result. It neither proves
+that $\mathcal D$ is invariant nor supplies an interior equilibrium.
+Time-varying shared inputs need not produce a fixed point.
 
-Formally: under linear information dynamics
-($g_I(I) = \gamma_I I$) and production parameters, the EISV
-system admits a unique equilibrium $\eisv^*$ to which all
-trajectories converge exponentially at rate
-$\alpha_c \geq 0.019$ in the metric $M$ above
-(\Cref{thm:contraction}, with full proof in
-\Cref{app:contraction-proof}). We deliberately keep the proof in
-the appendix: stability is a property the dynamics should have,
-not a contribution that distinguishes UNITARES from related
-frameworks. Class-conditional grounding
-(\Cref{sec:grounding,sec:class-calibration}) is the contribution
-that does.
+The fixed parameter set is not the deployed adaptive update.
+At the implementation revision inspected for this correction,
+linear-I defaults include $\gamma_I=0.169$, $\mu=0.5$ and a default
+$\lambda_2=0.06$, whereas the certificate uses $0.25$, $0.8$
+and $0.05$. Soft barriers, optional sensor springs, input/history
+feedback, adaptive parameters and finite-step integration add
+proof obligations. A direct numerical counterexample to the
+unrestricted finite-step contraction claim is recorded in
+\Cref{app:boundary-clamping}; it does not establish live runaway
+behavior or a loss of predictive information.
 
-The grounded reformulation of
-\Cref{sec:grounding} is designed to preserve stability
-\emph{within each agent class}, subject to the per-class
-re-certification described below. The dynamics
-$\dot{\eisv} = f(\eisv, t)$ are unchanged; only the meaning of
-the coordinates and the values of the scale constants change.
-The contraction certificate of \Cref{thm:contraction} relies on
-fleet-wide bounds (notably $\beta_I C'_{\max}$); under
-class-conditional normalization, the relevant bounds become
-class-indexed, and the contraction \emph{structure} carries
-through class-by-class, with each class acquiring its own
-$\alpha_c(c)$ upon re-certification at its class-conditional
-healthy operating point. The equilibrium $\eisv^*$ becomes the
-class-conditional healthy operating point of
-\Cref{def:scale-map} in deployments where calibration has been
-performed. A per-class numerical rate is not computed in this
-paper: the deployed certificate of \Cref{app:contraction-proof}
-remains valid for the legacy $\tanh$-of-$V$ coherence, and
-re-certification under a grounded coherence is treated in
-\Cref{rem:phase3-contraction}. Cross-class network
-synchronization (\Cref{thm:network}) is therefore a
-within-class property, as already qualified in \Cref{sec:network};
-fleet-wide synchronization across heterogeneous classes is not
-claimed and would not be expected.
+Class-conditional calibration does not by itself preserve a
+certificate. Changing the vector field requires verifying the
+uniform matrix inequality for that field. A calibrated healthy
+reference point is not automatically a dynamical equilibrium.
+The same-dynamics network result in \Cref{sec:network} assumes
+common inputs and compatible coupling; membership in a class
+alone does not establish those conditions.
 
 \begin{remark}[Contraction under a grounded coherence]
 \label{rem:phase3-contraction}
-The contraction proof of \Cref{app:contraction-proof} consumes
-the operational $\cv = \tanh$-based form through the off-diagonal
-bound $\beta_I C'_{\max} = 0.15$. A deployment that rewires the
-dynamics to consume a grounded coherence (\Cref{eq:C-manifold} or
-\Cref{eq:C-KL}) directly replaces $\partial \cv / \partial V$ by
-derivatives with respect to $(E, I, S)$, altering the off-diagonal
-bound on which the Gershgorin argument depends. Re-certification
-at the new operating point with the new coherence derivative is
-required; the proof structure adapts but the numerical rate
-$\alpha_c$ will change. The migration sequence of
-\Cref{sec:migration} is designed so this rewiring is the final
-step, preserving the deployed contraction certificate until it
-is replaced.
+The certificate consumes the legacy $\tanh$-based coherence and
+its derivative bound $C'_{\max}=0.5$. Replacing it with a grounded
+coherence introduces derivatives with respect to $(E,I,S)$ and
+changes the Jacobian. Re-certification must include those terms
+throughout the claimed domain. The pipeline-ordering migration
+keeps the decision computation separate from presentation; that
+engineering property does not certify either the original or
+replacement finite-step dynamics.
 \end{remark}
-
-
 
 % ═══════════════════════════════════════════════════════════
 \section{Adaptive Governor (CIRS v2)}
@@ -1432,74 +1411,74 @@ the active-inference literature, not a claim of equivalence.
 \section{Stochastic Extensions}
 \label{sec:stochastic}
 
-In production, the dynamics are subject to stochastic perturbations
-from unpredictable task inputs. We model this as an It\^{o} SDE~\cite{ito1944}:
+An It\^{o} SDE is a theoretical model for input uncertainty:
 \begin{equation}
-  d\eisv = f(\eisv, t)\,dt + G(\eisv, t)\,dW_t
-  \label{eq:sde}
+ dx=f(x,t)\,dt+G(x,t)\,dW_t,\qquad G\in\mathbb R^{4\times4}.
+ \label{eq:sde}
 \end{equation}
-where $W_t$ is a standard Wiener process and
-$G(\eisv, t) \in \R^{4 \times 4}$ is the diffusion matrix.
+Here $W_t$ is a standard four-dimensional Wiener process.
+The following statement specifies the noise coupling and requires
+a global domain. It is not a certificate for the compact-domain
+implementation.
 
-\begin{theorem}[Mean-Square Contraction]
+\begin{theorem}[Mean-Square Incremental Bound]
 \label{thm:stochastic}
-If the deterministic system is contracting with rate $\alpha_c$ under
-metric $M$, and the diffusion satisfies
+Suppose the SDE has unique nonexplosive solutions with finite
+second moments, $f$ contracts globally on $\mathbb R^4$ at rate
+$a>0$ in a constant metric $M\succ0$, and
 \begin{equation}
-  \operatorname{tr}(G^\top M G) \leq \sigma_{\max}^2
-  \label{eq:diffusion-bound}
+ \operatorname{tr}(G(x,t)^\top M G(x,t))\le Q
+ \label{eq:diffusion-bound}
 \end{equation}
-then the stochastic system satisfies:
-\begin{multline}
-  \mathbb{E}\bigl[\norm{\eisv_1(t) - \eisv_2(t)}_M^2\bigr] \leq \\
-  e^{-2\alpha_c t}\norm{\eisv_1(0) - \eisv_2(0)}_M^2
-  + \frac{\sigma_{\max}^2}{2\alpha_c}
-  \label{eq:mean-square}
-\end{multline}
-The steady-state variance is bounded by
-$\sigma_{\max}^2 / (2\alpha_c)$.
+uniformly. For two trajectories driven by independent Wiener
+processes, with deterministic initial states, let
+$D(t)=\mathbb E\|x_1(t)-x_2(t)\|_M^2$. Then
+\begin{equation}
+ D(t)\le e^{-2at}D(0)+\frac{Q}{a}(1-e^{-2at}).
+ \label{eq:mean-square}
+\end{equation}
+For one noisy trajectory and one noise-free reference with the
+same drift, the second term is $Q(1-e^{-2at})/(2a)$.
 \end{theorem}
+\begin{proof}
+For the independent pair, It\^{o}'s formula gives
+$D'\le-2aD+2Q$: each trajectory contributes one diffusion
+trace. Integrating this scalar inequality gives the result. Only
+one trace remains for the noise-free reference. This is the
+constant-metric case proved in \citet{pham2009stochastic}.
+For common additive noise the diffusion cancels in the difference;
+state-dependent common noise requires a separate difference bound.
+\end{proof}
 
-\begin{remark}[Verification for Production Noise Model]
-In production, the diffusion matrix is taken as
-$G = \operatorname{diag}(0, 0, \sigma, 0)$ with $\sigma = 0.02$
-(additive noise on the entropy channel only). This is a modeling
-choice chosen to be conservatively large relative to the entropy
-fluctuations observable in the audit log under stationary task load;
-an empirical trace-level estimate of $\sigma$ from per-agent $S_t$
-time series is future work. The qualitative conclusion below (noise
-an order of magnitude below typical signal excursions) tolerates
-$\sigma$ varying by a factor of $2$ in either direction; a larger
-departure would warrant re-derivation. For any diagonal metric
-$M = \operatorname{diag}(m_E, m_I, m_S, m_V)$:
-\[
-  \operatorname{tr}(G^\top M G) = m_S \sigma^2
-\]
-Setting $m_S = 1$ (natural scaling), $\sigma_{\max}^2 = (0.02)^2 =
-4 \times 10^{-4}$. With the certified contraction rate
-$\alpha_c = 0.019$ (\Cref{app:contraction-proof}), the steady-state
-variance bound from \eqref{eq:mean-square} is:
-\[
-  \frac{\sigma_{\max}^2}{2\alpha_c} = \frac{4 \times 10^{-4}}{0.038}
-  \approx 0.011
-\]
-Using the tighter eigenvalue rate $\alpha_c \approx 0.13$
-(Remark~\ref{rem:production-params}) would yield $1.5 \times 10^{-3}$,
-but the conservative Gershgorin bound already shows the noise is
-negligible. This is one order of magnitude smaller than typical EISV signal
-excursions ($\sim 0.1$--$0.3$), confirming that stochastic noise does
-not compromise governance decisions. The result follows directly from
-Pham et~al.~\cite{pham2009stochastic}.
+\begin{remark}[Illustrative noise scale and domain obligation]
+With the assumed $G=\operatorname{diag}(0,0,0.02,0)$ and $m_S=1$,
+$Q=4\times10^{-4}$. Substituting $a=0.019$ gives limiting
+mean-square upper bounds $Q/a\approx0.02105$ for the independent
+pair and $Q/(2a)\approx0.01053$ for a noisy trajectory against
+a noise-free reference. Their RMS bounds are approximately
+$0.1451$ and $0.1026$. These are not an order of magnitude below
+amplitude excursions of $0.1$--$0.3$; upper bounds also do not
+measure actual noise amplitude or decision errors.
+
+The substitution is illustrative: the continuous certificate of
+\Cref{app:contraction-proof} holds on $\mathcal D$, not globally
+on $\mathbb R^4$. Nonzero unreflected Brownian forcing can leave
+that region. Applying the theorem to this model requires a global
+extension satisfying its hypotheses, or a specified reflected SDE
+with an appropriate boundary proof. Discrete clipping is not that
+proof. The value $0.02$ is an unestimated modeling assumption.
+The inspected implementation supplies a deterministic calibration
+penalty through the input named \texttt{noise\_S}, integrated with
+$dt$, rather than a sampled Wiener increment.
 \end{remark}
 
-The mean-square bound of \Cref{thm:stochastic} is a worst-case
-contraction statement; a verdict-level false-alarm rate
-$P_{\text{FA}} = \int_{\{\Phi(\eisv) < 0\}} p_\ast(\eisv)\, d\eisv$
-requires the stationary distribution of the SDE and is deferred
-to subsequent work. Related Fokker--Planck frameworks for LLM
-drift~\cite{carson2025stochastic} give closed-form first-passage
-times for one-dimensional severity processes.
-
+A verdict-level error rate needs a specified noise law, decision
+margins and a crossing or distribution analysis. Where a stationary
+density $p_* $ exists, a quantity such as
+$P_{\mathrm{FA}}=\int_{\{\Phi(x)<0\}}p_*(x)\,dx$ measures threshold
+occupancy; interpreting it as a false-alarm rate additionally needs
+a definition of a false alarm. Neither bounded mean-square distance
+nor stationarity alone establishes decision correctness.
 
 % ═══════════════════════════════════════════════════════════
 \section{Multi-Agent Network}
@@ -1516,29 +1495,45 @@ a within-class qualification on homogenization claims.
 
 \subsection{Network Topology}
 
-Consider $N$ agents with states $\eisv_i$, $i = 1, \ldots, N$,
-connected by a graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ with
-Laplacian $L$. The coupled dynamics are:
+Consider a fixed undirected graph with nonnegative symmetric edge
+weights $w_{ij}=w_{ji}$ and agents obeying
 \begin{equation}
-  \dot{\eisv}_i = f(\eisv_i, t)
-  + \epsilon_c \sum_{j \in \mathcal{N}_i} H(\eisv_j - \eisv_i)
-  \label{eq:network}
+ \dot x_i=f(x_i,t)+\epsilon_c\sum_j w_{ij}H(x_j-x_i),
+ \qquad \epsilon_c\ge0.
+ \label{eq:network}
 \end{equation}
-where $H \in \R^{4 \times 4}$ is a coupling matrix and
-$\epsilon_c > 0$ is the coupling strength.
+Here all agents have the same drift and exogenous inputs, and
+$H\in\mathbb R^{4\times4}$ is fixed.
 
-\begin{theorem}[Network Synchronization, Within-Class]
+\begin{theorem}[Synchronization with Dissipative Coupling]
 \label{thm:network}
-Consider a coupled subnetwork in which every agent shares the same
-isolated dynamics $f$ contracting with rate $\alpha_c$. The
-subnetwork synchronizes (all such agents converge to a common
-trajectory) provided
+Suppose $f$ contracts at rate $a>0$ in a common constant metric
+$M\succ0$ on a convex region $\mathcal D$, and
 \begin{equation}
-  \alpha_c > \lambda_{\max}(L) \cdot \lambda_{\max}(H)
-  \label{eq:sync-condition}
+ MH+H^\top M\succeq0.
+ \label{eq:sync-condition}
 \end{equation}
-where $\lambda_{\max}$ denotes the largest eigenvalue.
+Let $s(t)$ solve $\dot s=f(s,t)$. On any interval $[0,T]$ where $s$ and
+all coupled trajectories remain in $\mathcal D$,
+$U(t)=\sum_i\|x_i(t)-s(t)\|_M^2$ satisfies
+$U(t)\le e^{-2at}U(0)$. If this holds for all $t\ge0$, the
+agents synchronize to the common trajectory.
 \end{theorem}
+\begin{proof}
+Set $e_i=x_i-s$ and $B=(MH+H^\top M)/2$. Contraction bounds
+the isolated terms in $\dot U$ by $-2aU$. Symmetry of the edge
+weights groups the coupling into
+\[
+ -2\epsilon_c\sum_{i<j}w_{ij}(e_i-e_j)^\top B(e_i-e_j)\le0.
+\]
+Thus $\dot U\le-2aU$, giving the stated bound.
+\end{proof}
+No graph connectivity is required here because isolated identical
+systems already contract under common inputs. Coupling satisfying
+the displayed metric condition cannot worsen this bound. Arbitrary
+$H$, directed graphs, different inputs and changing parameters are
+outside this theorem; their analysis must include the coupling gain
+and the symmetric part in the chosen metric.
 
 \begin{remark}[Synchronization is a within-class property]
 \Cref{thm:network} is a same-dynamics result and therefore applies
@@ -1661,12 +1656,14 @@ of the dynamics:
 \item \textbf{Low entropy:} Mean $S = 0.082$ with strong decay ($\mu
   = 0.8$) indicates effective uncertainty management.
 \item \textbf{Coherence at 0.49:} The observed mean $C = 0.483$
-  (\Cref{fig:coherence-hist}) is consistent with
-  Remark~\ref{rem:operating-range}: coherence sits near the
-  midpoint for every agent, so it barely separates them.
+  (\Cref{fig:coherence-hist}) lies near the transform midpoint.
+  This observed concentration does not by itself determine the
+  information in the score or its contribution to threshold decisions
+  (Remark~\ref{rem:operating-range}).
 \item \textbf{$V$ confined to $[-0.1, 0.1]$:} 100\% of active agents
-  have $V$ within $[-0.089, 0.007]$ (\Cref{fig:sv-scatter}), validating
-  the damping analysis.
+  have $V$ within $[-0.089, 0.007]$ (\Cref{fig:sv-scatter}). This
+  snapshot records a narrow operating range; it does not isolate
+  damping's causal contribution to that range.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -1936,12 +1933,14 @@ Watcher   &    0 &  67 &   0 \\
 
 \textbf{Interpretation.} The formula change is not a cosmetic
 relabeling even when both quantities live in $[0,1]$: it changes
-basin labels for $15$--$33\%$ of rows per class. Much of that is
-mechanical. The legacy form is nearly constant (about $0.49$ for
-every agent; \Cref{sec:experiments}), so substituting any varying
-score moves basins. The rest reflects the structural difference
-between a fleet-wide $\tanh$ of $V$ and a class-conditional
-distance from each class's measured healthy operating point.
+basin labels for $15$--$33\%$ of rows per class. The legacy form
+is nearly constant (about $0.49$ in the reported deployment;
+\Cref{sec:experiments}). The replacement changes labels where its
+values cross the classifier's operative thresholds; variation alone
+does not imply a basin change. This comparison combines a change
+from a fleet-wide $\tanh$ of $V$ to a distance-based score with
+class-conditional calibration; it does not isolate their separate
+contributions.
 
 The flip direction is informative. The dominant transition is into
 the \texttt{low} basin: agents that the production server
@@ -2193,12 +2192,13 @@ three practical consequences:
   designed to detect.
 \item \textbf{Operator trust:} Dashboard values correspond to actual
   system state. An operator seeing $C = 0.49$ knows it is the raw
-  value, not a rescaled one, although at this operating range the
-  raw value says little about any individual agent.
-\item \textbf{Contraction validity:} The stability proofs in
-  \Cref{sec:contraction} depend on the true state. Transforming
-  measurements would invalidate the contraction analysis by
-  introducing an unmodeled observation function.
+  value, not a rescaled one; its decision contribution still depends
+  on the operative thresholds.
+\item \textbf{Model provenance:} The certificate in
+  \Cref{sec:contraction} concerns its specified vector field. A
+  presentation-only transformation does not change that field;
+  feeding transformed measurements back into it requires analyzing
+  the resulting dynamics.
 \end{enumerate}
 
 \subsection{Parameter Sensitivity}
@@ -2207,33 +2207,34 @@ The system's behavior is most sensitive to four parameters:
 
 \paragraph{Convergence rate $\alpha$.}
 Controls how quickly $E$ tracks $I$. Production uses
-$\alpha = 0.42$. Larger $\alpha$ increases diagonal dominance in
-the Jacobian (improving contraction) but makes the energy channel
-less responsive to behavioral--epistemic drift.
+$\alpha = 0.42$. Increasing $\alpha$ strengthens both the
+$E$-channel diagonal damping and its coupling from $I$; any claim
+about the contraction rate must check the complete matrix inequality.
 
 \paragraph{Coherence coupling $\beta_I$.}
-Determines how strongly coherence restores integrity. The theoretical
-optimum for contraction ($\beta_I = 0.05$, minimizing off-diagonal
-coupling) conflicts with the operational need for coherence feedback
-($\beta_I = 0.30$, enabling meaningful recovery from entropy-driven
-degradation). Production uses the larger value; contraction is
-maintained because $\beta_I C'_{\max} = 0.15$ remains below the
-diagonal terms.
+Determines how strongly coherence restores integrity. The
+reported system uses $\beta_I=0.30$. Its derivative contribution
+is $\beta_I C'_{\max}=0.15$; comparison with one diagonal
+entry is insufficient. The complete row conditions in
+\Cref{app:contraction-proof} certify the printed parameter set.
 
 \paragraph{Self-regulation $\gamma_I$.}
 Determines the I-channel's intrinsic damping. In logistic mode,
-$\gamma_I = 0.25$ yields $m_{\text{sat}} = -1.19$ at production
-operating points (\Cref{app:saturation})---all agents are saturated,
-relying on clamping rather than dynamics to bound $I$. In linear mode,
+$\gamma_I = 0.25$ yields negative $m_{\text{sat}}$ at the reported
+operating points (\Cref{app:saturation}), indicating forcing
+above maximum logistic damping in that snapshot. In linear mode,
 $\gamma_I = 0.169$ was tuned to give $I^* \approx 0.80$, well within
-$(0,1)$, eliminating boundary dependence entirely.
+$(0,1)$ for that forcing level. Other forcing levels can still
+produce boundary contact.
 
 \paragraph{Void damping $\delta$.}
-At $\delta = 0.4$, the void channel has a time constant of
-$\tau_V = 1/\delta = 2.5$ update cycles. This confines $V$ to
-$[-0.1, 0.1]$ in production (\Cref{rem:operating-range}). Reducing
-$\delta$ would widen the coherence operating range but slow the
-system's response to $E$-$I$ imbalances.
+At $\delta=0.4$, the uncoupled relaxation timescale is
+$\tau_V=1/\delta=2.5$ in model time units. For a fixed input
+gap $d=E-I$, the scalar channel has $V^*=\kappa d/\delta$.
+The observed range depends on that input trajectory as well as
+damping (Remark~\ref{rem:operating-range}); $\delta$ alone does
+not confine $V$ to the observed interval. A smaller $\delta$
+increases this fixed-input gain and lengthens the relaxation time.
 
 \subsection{Verdict Sensitivity to the Objective Weights}
 \label{sec:phi-sensitivity}
@@ -2315,7 +2316,9 @@ the same infrastructure.
 \item The coherence function $\cv$ creates a nonlinear feedback
   loop whose gain depends on the operating point (maximum at
   $V = 0$, vanishing at $|V| \gg 0$). The contraction analysis
-  uses $C'_{\max}$ as a worst-case bound, which is conservative.
+  uses $C'_{\max}$ as a worst-case bound for the fixed continuous
+  model. It does not include state-dependent input derivatives,
+  controller history or the implemented finite-step map.
 \item The behavioral--epistemic drift vector's four components are currently
   equally weighted; adaptive weighting based on domain context
   is future work.
@@ -2363,9 +2366,12 @@ and presentation-producing pipeline stages. We argue this
 separation is worth doing on its own merits, independent of any
 specific migration.
 
-The contraction certificate holds for the deployed dynamics,
-with full proof in \Cref{app:contraction-proof}; a deployment
-that consumes a grounded coherence must be re-certified
+The corrected certificate in \Cref{app:contraction-proof} proves
+continuous incremental contraction for the printed fixed parameter
+set while trajectories remain in its domain under common exogenous
+inputs. It does not establish domain invariance, an interior
+equilibrium or contraction of the deployed finite-step controller.
+Grounded coherence changes the field and requires a new certificate
 (\Cref{rem:phase3-contraction}).
 Production deployment statistics from 903~agents over a 69-day observation window
 appear in \Cref{sec:experiments}; \Cref{sec:phase-2-measurement}
@@ -2559,7 +2565,7 @@ H.~Wang, C.~M. Poskitt, J.~Wei, and J.~Sun.
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{EISV Dynamics Parameters (Production Values)}
+\caption{EISV parameter values used in this paper; distinct from current active defaults (Section~\ref{sec:contraction}).}
 \label{tab:params}
 \begin{tabular}{@{}llrl@{}}
 \toprule
@@ -2581,7 +2587,7 @@ Natural decay & $\mu$ & 0.80 & $S$ relaxation \\
 Drift injection & $\lambda_{1}$ & 0.30 & Base (adaptive) \\
 Coherence red. & $\lambda_{2}$ & 0.05 & $C(V)$ reduces $S$ \\
 Complexity & $\beta_c$ & 0.15 & Task $\to$ entropy \\
-Noise & $\sigma$ & 0.02 & Stochastic term \\
+Noise & $\sigma$ & 0.02 & Assumed noise \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Void channel}} \\
 Coupling & $\kappa$ & 0.30 & $E$-$I$ gap \\
@@ -2682,373 +2688,311 @@ date and corpus-size columns once those remaining constants are
 measured.
 
 
-\section{Proof of Contraction (Full)}
+\section{Conditional Continuous Contraction Certificate}
 \label{app:contraction-proof}
 
-This appendix presents the full theorem statement and proof of
-EISV stability summarized in \Cref{sec:contraction}, together with
-the equilibrium characterization. Both were demoted from the v5
-main body to this appendix; the v6 main body retains only the
-result statement.
+This appendix proves an incremental bound for the printed
+linear-I continuous vector field. It is distinct from a proof
+for the numerical integrator or the history-dependent governor.
 
-\subsection*{Contraction Framework}
+\subsection*{Domain, Inputs and Jacobian}
 
-\begin{definition}[Contraction~\cite{lohmiller1998contraction}]
-A system $\dot{\eisv} = f(\eisv, t)$ is \emph{contracting} with
-rate $\alpha > 0$ in a metric $M(\eisv, t) \succ 0$ if the
-generalized Jacobian satisfies
+Let $\mathcal D=[0,1]^2\times[S_{\min},1]\times[-1,1]$,
+$S_{\min}=0.001$. Parameters are fixed and nonnegative, with
+$\alpha,\gamma_I,\mu,\delta>0$. The common $\Theta$ is fixed,
+as are $C_{\max}$, $C_1$, $\lambda_1$ and $\lambda_2$. Drift
+and complexity are exogenous inputs shared between compared
+trajectories and may vary with time. Noise is absent in this
+continuous deterministic certificate. State-dependent input
+feedback would contribute additional derivatives.
+
+For a constant positive diagonal metric
+$M=\operatorname{diag}(m_E,m_I,m_S,m_V)$, the sufficient uniform
+matrix condition is
 \begin{equation}
-  F = \left(\dot{M} + M\frac{\partial f}{\partial \eisv}
-  + \left(\frac{\partial f}{\partial \eisv}\right)^\top M\right)
-  \preceq -2\alpha M
-  \label{eq:contraction-condition}
+ \begin{gathered}
+ F(x)=MJ(x)+J(x)^\top M\preceq-2aM,\\
+ x\in\mathcal D,\qquad a>0.
+ \end{gathered}
+ \label{eq:contraction-condition}
 \end{equation}
-for all $\eisv \in \mathcal{X}$, $t \geq 0$. This guarantees that
-all trajectories converge exponentially to a unique trajectory at
-rate $e^{-\alpha t}$.
-\end{definition}
-
-\subsection*{Jacobian of the EISV System}
-
-Define $J = \partial f / \partial \eisv$. For the governing
-equations \eqref{eq:dE}--\eqref{eq:dV}:
+The Jacobian of \eqref{eq:dE}--\eqref{eq:dV}, with linear $g_I$,
+is
 \begin{equation}
-J = \begin{pmatrix}
--\alpha - \beta_E S & \alpha & -\beta_E E & 0 \\
-0 & -\gamma_I & -k & \beta_I C'(V) \\
-0 & 0 & -\mu & -\lambda_2 C'(V) \\
-\kappa & -\kappa & 0 & -\delta
-\end{pmatrix}
+J=\begin{pmatrix}
+ -\alpha-\beta_E S&\alpha&-\beta_E E&0\\
+ 0&-\gamma_I&-k&\beta_I q\\
+ 0&0&-\mu&-\lambda_2 q\\
+ \kappa&-\kappa&0&-\delta
+\end{pmatrix},
 \label{eq:jacobian}
 \end{equation}
-where $C'(V) = \frac{\partial C}{\partial V} =
-\frac{C_{\max} C_1}{2}\operatorname{sech}^2(C_1 V)$ and the
-$\deta$-dependent terms are treated as exogenous forcing.
+where $q=C'(V)=C_{\max}C_1\operatorname{sech}^2(C_1V)/2$
+and $0\le q\le q_{\max}=C_{\max}C_1/2$. This interval may
+conservatively enlarge the derivative range on $\mathcal D$.
 
-\subsection*{Theorem and Proof}
+\subsection*{Explicit Sufficient Conditions}
 
-\begin{theorem}[EISV Contraction]
+The diagonal entries of $F$ are
+\begin{align}
+ F_{11}&=-2m_E(\alpha+\beta_E S),\label{eq:F11}\\
+ F_{22}&=-2m_I\gamma_I,\label{eq:F22}\\
+ F_{33}&=-2m_S\mu,\label{eq:F33}\\
+ F_{44}&=-2m_V\delta.\label{eq:F44}
+\end{align}
+Its nonzero off-diagonal entries, with $F_{ji}=F_{ij}$, are
+\begin{align}
+ F_{12}&=m_E\alpha,\label{eq:F12}\\
+ F_{13}&=-m_E\beta_E E,\label{eq:F13}\\
+ F_{14}&=m_V\kappa,\label{eq:F14}\\
+ F_{23}&=-m_I k,\label{eq:F23}\\
+ F_{24}&=m_I\beta_Iq-m_V\kappa,\label{eq:F24}\\
+ F_{34}&=-m_S\lambda_2q.\label{eq:F34}
+\end{align}
+An off-diagonal entry's sign alone does not determine its effect
+on a quadratic form. The following bounds use absolute values,
+retaining the cancellation within $F_{24}$.
+
+Define
+\begin{align*}
+ B_{24}&=\max_{q\in\{0,q_{\max}\}}
+             |m_I\beta_Iq-m_V\kappa|,\\
+ B_4&=\max_{q\in\{0,q_{\max}\}}
+       \bigl(|m_I\beta_Iq-m_V\kappa|+m_S\lambda_2q\bigr).
+\end{align*}
+Both maxima occur at interval endpoints because their arguments
+are convex functions of $q$. Uniform upper bounds for the row
+sums of $F+2aM$ are
+\begin{align}
+ R_E={}&-2m_E(\alpha+\beta_ES_{\min})+2am_E\nonumber\\
+       &+m_E\alpha+m_E\beta_E+m_V\kappa,\label{eq:gersh-row1}\\
+ R_I={}&-2m_I\gamma_I+2am_I+m_E\alpha\nonumber\\
+       &+m_Ik+B_{24},\label{eq:gersh-row2}\\
+ R_S={}&-2m_S\mu+2am_S+m_E\beta_E\nonumber\\
+       &+m_Ik+m_S\lambda_2q_{\max},\label{eq:gersh-row3}\\
+ R_V={}&-2m_V\delta+2am_V+m_V\kappa+B_4.\label{eq:gersh-row4}
+\end{align}
+Here $E\le1$ and $S\ge S_{\min}$ are used explicitly.
+
+\begin{theorem}[Conditional EISV Contraction]
 \label{thm:contraction}
-The EISV system with linear information dynamics
-($g_I(I) = \gamma_I I$) is contracting with rate
+Under the domain, parameter and input assumptions above, if some
+positive diagonal $M$ and $a>0$ satisfy
 \begin{equation}
-  \alpha_c = \min\left\{
-    \alpha + \beta_E S_{\min},\;
-    \gamma_I,\;
-    \mu,\;
-    \delta
-  \right\} - \epsilon(M)
-  \label{eq:contraction-rate}
+ R_E\le0,\quad R_I\le0,\quad R_S\le0,\quad R_V\le0,
+ \label{eq:contraction-sufficient}
 \end{equation}
-where $\epsilon(M) \geq 0$ accounts for off-diagonal coupling in
-the chosen metric $M \succ 0$. With the diagonal metric
-$M = \operatorname{diag}(m_E, m_I, m_S, m_V)$, a sufficient
-condition for $\alpha_c > 0$ is
+then any two solutions that remain in $\mathcal D$ on $[0,T]$
+satisfy
 \begin{equation}
-  \min\{\alpha, \gamma_I, \mu, \delta\} >
-  \max\!\bigl\{
-    \kappa\!\sqrt{\tfrac{m_V}{m_E}},\,
-    \beta_I C'_{\max}\!\sqrt{\tfrac{m_I}{m_V}}
-  \bigr\}
-  \label{eq:contraction-sufficient}
+ \begin{gathered}
+ \|x_1(t)-x_2(t)\|_M\le e^{-at}\|x_1(0)-x_2(0)\|_M,\\
+ 0\le t\le T.
+ \end{gathered}
+ \label{eq:contraction-rate}
 \end{equation}
-where $C'_{\max} = C_{\max}C_1/2$.
 \end{theorem}
+\begin{proof}
+The row bounds imply by the symmetric Gershgorin theorem that
+$F+2aM\preceq0$ throughout $\mathcal D$. For $d=x_1-x_2$,
+convexity keeps the segment $x_2+ud$, $0\le u\le1$, inside
+$\mathcal D$. With the inputs held common,
+\[
+ f(x_1,t)-f(x_2,t)=\int_0^1 J(x_2+ud,t)d\,du.
+\]
+Consequently $\frac{d}{dt}(d^\top Md)\le-2a d^\top Md$.
+Integration and a square root give the bound.
+\end{proof}
+These four row conditions do not establish domain invariance.
 
-\begin{remark}[Production Parameters]
+\subsection*{Fixed-Parameter Verification}
+
+\begin{remark}[Printed Certificate Parameters]
 \label{rem:production-params}
-With production values ($\alpha = 0.42$, $\gamma_I = 0.25$,
-$\mu = 0.8$, $\delta = 0.4$, $\kappa = 0.3$, $\beta_I = 0.3$,
-$C'_{\max} = 0.5$), the diagonal terms are
-$\{0.42, 0.25, 0.8, 0.4\}$ and the coupling bound is dominated by
-$\kappa = 0.3$ and $\beta_I C'_{\max} = 0.15$. The Gershgorin
-analysis below with diagonal metric
-$M = \operatorname{diag}(0.1, 0.2, 1.0, 0.08)$ yields a certified
-contraction rate $\alpha_c = 0.019$. This is conservative:
-computing the eigenvalues of $(MJ + J^\top\! M)/(2M)$ directly
-gives $\alpha_c \approx 0.13$, and the spectral abscissa of the
-Jacobian $J$ at equilibrium is $-0.15$. The Gershgorin bound is
-tight on Row~2 (the $I$-channel) because the $m_E \alpha$
-cross-term competes with the weak $\gamma_I = 0.25$ diagonal; the
-actual system converges roughly $8\times$ faster than the
-certified bound.
+The certificate uses
+$\alpha=0.42$, $\beta_E=0.10$, $\beta_I=0.30$,
+$\gamma_I=0.25$, $k=0.10$, $\mu=0.80$, $\kappa=0.30$,
+$\delta=0.40$, $\lambda_2=0.05$, $q_{\max}=0.5$ and
+$M=\operatorname{diag}(0.1,0.2,1.0,0.08)$.
+These are the printed proof parameters, not a claim that they
+match a current deployment's active parameter set.
 \end{remark}
 
-\subsection*{Equilibrium Characterization}
-
-Setting \eqref{eq:dE}--\eqref{eq:dV} to zero and solving:
-
-\begin{proposition}[Equilibrium]
-\label{prop:equilibrium}
-Under mild conditions ($\alpha > 0$, $\mu > 0$, $\delta > 0$,
-$\gamma_I > 0$), the system admits a unique equilibrium
-$\eisv^* = (E^*, I^*, S^*, V^*)$ satisfying
-\begin{align}
-  V^* &= \frac{\kappa(E^* - I^*)}{\delta} \label{eq:Vstar} \\
-  E^* &= \frac{\alpha I^*}{(\alpha + \beta_E S^*)} + O(\norm{\deta}^2)
-    \label{eq:Estar} \\
-  I^* &= \frac{\beta_I C(V^*)}{\gamma_I + kS^*/\beta_I C(V^*)}
-    \label{eq:Istar}
-\end{align}
-The fixed point is globally exponentially stable by
-\Cref{thm:contraction}.
-\end{proposition}
-
-\subsection*{Full Construction}
-
-We prove \Cref{thm:contraction} by constructing a diagonal metric
-$M = \operatorname{diag}(m_E, m_I, m_S, m_V) \succ 0$ and showing
-that the generalized Jacobian condition \eqref{eq:contraction-condition}
-holds throughout the state space $\mathcal{X}$.
-
-\subsection*{Step 1: Symmetric Part of $MJ + J^\top M$}
-
-For diagonal $M$, the matrix $F = MJ + J^\top M$ has entries:
-\begin{align*}
-  F_{ii} &= 2 m_i J_{ii} \\
-  F_{ij} &= m_i J_{ij} + m_j J_{ji}, \quad i \neq j
-\end{align*}
-
-The diagonal entries of $F$ (using linear $g_I$ mode) are:
-\begin{align}
-  F_{11} &= -2m_E(\alpha + \beta_E S) \leq -2m_E \alpha
-    \label{eq:F11} \\
-  F_{22} &= -2m_I \gamma_I
-    \label{eq:F22} \\
-  F_{33} &= -2m_S \mu
-    \label{eq:F33} \\
-  F_{44} &= -2m_V \delta
-    \label{eq:F44}
-\end{align}
-where \eqref{eq:F11} uses $S \geq S_{\min} \geq 0$.
-
-The nonzero off-diagonal entries are:
-\begin{align}
-  F_{12} = F_{21} &= m_E \alpha \label{eq:F12} \\
-  F_{13} &= -m_E \beta_E E \leq 0 \label{eq:F13} \\
-  F_{23} &= -m_I k \label{eq:F23} \\
-  F_{24} &= m_I \beta_I C'(V) \label{eq:F24} \\
-  F_{34} &= -m_V \lambda_2 C'(V) \label{eq:F34} \\
-  F_{14} = F_{41} &= m_V \kappa \label{eq:F14}
-\end{align}
-where $F_{13}$ and $F_{34}$ are negative (aiding contraction)
-and are bounded conservatively by their absolute values in the
-Gershgorin analysis below.
-
-Note: For diagonal $M$, $F_{12} = F_{21} = m_E J_{12} + m_I J_{21}
-= m_E \alpha$.
-
-\subsection*{Step 2: Gershgorin Circle Theorem}
-
-For $F + 2\alpha_c M \preceq 0$, it suffices by Gershgorin that
-for each row~$i$:
-\begin{equation}
-  F_{ii} + 2\alpha_c m_i + \!\sum_{j \neq i}\! |F_{ij}| \leq 0
-  \label{eq:gershgorin}
-\end{equation}
-
-Bounding $|F_{13}| \leq m_E\beta_E$ conservatively (its sign aids
-contraction), the four row conditions are:
-
-\paragraph{Row 1 ($E$):}
-\begin{equation}
-  m_E(-\alpha + \alpha_c + \beta_E) + m_V\kappa \leq 0
-  \label{eq:gersh-row1}
-\end{equation}
-
-\paragraph{Row 2 ($I$):}
-\begin{equation}
-  \begin{split}
-  m_I(-2\gamma_I + 2\alpha_c + k &+ \beta_I C'_{\max}) \\
-  &+ m_E\alpha \leq 0
-  \end{split}
-  \label{eq:gersh-row2}
-\end{equation}
-
-\paragraph{Row 3 ($S$):}
-\begin{equation}
-  \begin{split}
-  -2m_S\mu + 2\alpha_c m_S &+ m_E\beta_E \\
-  &+ m_I k + m_V\lambda_2 C'_{\max} \leq 0
-  \end{split}
-  \label{eq:gersh-row3}
-\end{equation}
-
-\paragraph{Row 4 ($V$):}
-\begin{equation}
-  \begin{split}
-  m_V(-2\delta + 2\alpha_c + \kappa &+ \lambda_2 C'_{\max}) \\
-  &+ m_I\beta_I C'_{\max} \leq 0
-  \end{split}
-  \label{eq:gersh-row4}
-\end{equation}
-
-\subsection*{Step 3: Metric Construction}
-
-We seek $m_E, m_I, m_S, m_V > 0$ and $\alpha_c > 0$ satisfying
-\eqref{eq:gersh-row1}--\eqref{eq:gersh-row4}. A natural choice is to
-set the metric weights inversely proportional to the coupling they
-receive:
-\begin{equation}
-  m_E = 1, \quad m_I = \frac{\alpha}{2\gamma_I}, \quad
-  m_S = 1, \quad m_V = \frac{\alpha}{2\delta}
-\end{equation}
-
-\subsection*{Step 4: Numerical Verification}
-
-Production parameters: $\alpha = 0.42$, $\beta_E = 0.10$,
-$\beta_I = 0.30$, $\gamma_I = 0.25$, $k = 0.10$, $\mu = 0.80$,
-$\kappa = 0.30$, $\delta = 0.40$, $\lambda_2 = 0.05$,
-$C'_{\max} = 0.5$.
-
-\paragraph{Initial attempt.}
-The natural metric $m_E = 1$, $m_I = 0.84$, $m_S = 1$,
-$m_V = 0.525$ fails Row~2 ($+0.21 + 1.68\alpha_c > 0$).
-Reducing $m_I = 0.2$, $m_E = 0.1$ makes Row~2 the binding
-constraint:
-\[
-  -0.008 + 0.4\alpha_c \leq 0
-  \;\implies\; \alpha_c < 0.02
-\]
-We set $\alpha_c = 0.019$ (strictly less) to ensure all
-inequalities are strict.
-
-\paragraph{Verification.}
-With $M = \operatorname{diag}(0.1, 0.2, 1.0, 0.08)$ and
-$\alpha_c = 0.019$:
-
-\smallskip
-\begin{center}
-\footnotesize
-\begin{tabular}{@{}lrrl@{}}
-\toprule
-\textbf{Row} & \textbf{LHS} & \textbf{$< 0$?} & \\
-\midrule
-1\,($E$) & $-0.006$ & yes & \checkmark \\
-2\,($I$) & $-0.0004$ & yes & \checkmark \\
-3\,($S$) & $-1.529$ & yes & \checkmark \\
-4\,($V$) & $-0.005$ & yes & \checkmark \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\smallskip
-Row~4 initially failed with $m_V = 0.05$ ($+0.008$); adjusting
-to $m_V = 0.08$ resolves it ($-0.005$) while Row~1 remains
-satisfied ($-0.006$). Row~2 now has strict margin ($-0.0004$).
-
-\medskip
-\textbf{Result:} With $M = \operatorname{diag}(0.1, 0.2, 1.0,
-0.08)$, the Gershgorin analysis certifies $\alpha_c = 0.019$.
-This is conservative---the eigenvalue-based bound is
-$\alpha_c \approx 0.13$ and the spectral abscissa of~$J$ at
-equilibrium is $-0.15$
-(Remark~\ref{rem:production-params}). The key result is
-$\alpha_c > 0$, guaranteeing global exponential
-convergence. \qed
-
-
-\section{I-Channel Self-Regulation: Linear vs.\ Logistic}
-\label{app:saturation}
-
-\Cref{sec:equations} specifies the linear self-regulation term
-$g_I(I) = \gamma_I I$. This appendix records the logistic
-alternative $g_I^{\log}(I) = \gamma_I I(1-I)$, its saturation
-pathology under production forcing, and the empirical basis for
-choosing the linear form.
-
-\paragraph{Logistic form and saturation criterion.}
-Under the logistic self-regulation, the $I$ subsystem
-($dI/dt = 0$) has two equilibria
-\begin{equation}
-  I^*_{\pm} = \tfrac{1}{2} \pm \tfrac{1}{2}\sqrt{1 - 4A/\gamma_I},
-  \qquad A = -kS + \beta_I C(V).
-  \label{eq:I-equilibria}
-\end{equation}
-
-\begin{proposition}[Saturation criterion]
-\label{prop:saturation}
-The logistic $I$-dynamics has a boundary saturation pathology
-when $A > \gamma_I/4$. In this regime $I \to 1$ monotonically and
-the system loses its ability to distinguish integrity levels. The
-saturation margin
-\begin{equation}
-  m_{\text{sat}} = 1 - 4A/\gamma_I
-  \label{eq:saturation-margin}
-\end{equation}
-is positive in safe operation and non-positive under saturation.
-\end{proposition}
-
-\paragraph{Linear form.}
-The linear self-regulation $g_I^{\text{lin}}(I) = \gamma_I I$
-yields the unique equilibrium
-\begin{equation}
-  I^* = (-kS + \beta_I C(V)) / \gamma_I
-  \label{eq:I-star-linear}
-\end{equation}
-which is always in $(0,1)$ when $\gamma_I$ exceeds the maximum
-forcing. Under the linear form the Jacobian entry
-$J_{22} = -\gamma_I$ is constant; under the logistic form
-$J_{22} = -\gamma_I(1 - 2I)$, which changes sign at $I = 0.5$ and
-approaches zero at the boundaries---precisely where contraction
-is most needed. Production uses the linear form with
-$\gamma_I = 0.169$, giving $I^* \approx 0.80$.
-
-\paragraph{Empirical saturation under the logistic form.}
-The saturation margin was computed for all $75$ active agents
-under the logistic mode with parameters $\gamma_I = 0.25$,
-$k = 0.10$, $\beta_I = 0.30$:
-
+For $a=0.019$, $B_{24}=0.024$ and $B_4=0.031$. Exact rational
+substitution in the four inequalities gives:
 \begin{center}
 \small
 \begin{tabular}{@{}lrr@{}}
 \toprule
-\textbf{Regime} & \textbf{Mean $m_{\text{sat}}$} & \textbf{\% Sat.} \\
+Row & Exact upper bound & Decimal\\
 \midrule
-Convergence ($n=24$) & $-1.45$ & 100\% \\
-Exploration ($n=22$) & $-1.18$ & 100\% \\
-Divergence ($n=29$) & $-1.10$ & 100\% \\
-\midrule
-All active ($n=75$) & $-1.23$ & 100\% \\
+$E$ & $-211/50000$ & $-0.00422$\\
+$I$ & $-4/625$ & $-0.0064$\\
+$S$ & $-1507/1000$ & $-1.507$\\
+$V$ & $-149/25000$ & $-0.00596$\\
 \bottomrule
 \end{tabular}
 \end{center}
+All four are strictly negative. Thus $a=0.019$ is a certified
+conditional rate; no numerical grid is needed for this result.
 
-Every active agent has a negative saturation margin under the
-logistic form: the forcing term $A$ exceeds $\gamma_I/4 = 0.0625$
-across the fleet. The saturation criterion
-(\Cref{prop:saturation}) holds regardless of the agent's
-configuration history, since it depends only on the relationship
-$A > \gamma_I/4$.
+For comparison, define the normalized symmetric matrix
+$K=\tfrac12 M^{-1/2}FM^{-1/2}$. It is affine in $(E,S,q)$,
+and $\lambda_{\max}(K)$ is convex. Its maximum over
+$[0,1]\times[0.001,1]\times[0,0.5]$ is therefore attained at a
+vertex. A floating-point check of all eight vertices gives
+$\max\lambda_{\max}(K)\approx-0.1292064$. This is a stronger
+numerical bound for the same fixed field, not an observed
+convergence rate or an equilibrium spectral abscissa. The exact
+$0.019$ certificate above is the retained analytical guarantee.
+Reproduction code accompanies the source in
+\texttt{scripts/audits/contraction/}.
 
+\subsection*{Equilibria and Invariance}
 
-\section{Boundary Clamping and Non-Smoothness}
+For fixed deterministic forcing, any interior equilibrium of the
+unprojected model must satisfy
+\begin{align}
+ V^*&=\frac{\kappa(E^*-I^*)}{\delta},\label{eq:Vstar}\\
+ E^*&=\frac{\alpha I^*+\gamma_E\|\Delta\eta\|^2}
+                 {\alpha+\beta_E S^*},\label{eq:Estar}\\
+ I^*&=\frac{\beta_I C(V^*)-kS^*}{\gamma_I},\label{eq:Istar}\\
+ S^*&=\frac{\lambda_1\|\Delta\eta\|^2-\lambda_2C(V^*)
+                     +\beta_c\mathcal C}{\mu}.
+\end{align}
+These are necessary relations, not an existence proof.
+Under the certificate assumptions there can be at most one
+such equilibrium in $\mathcal D$: two distinct constant solutions
+would contradict the incremental bound. If one exists, other
+solutions remaining in $\mathcal D$ for all future time converge to it.
+
+Existence and invariance cannot be inferred from positive damping.
+For example, zero drift and zero complexity give
+$\dot S=-\mu S-\lambda_2C(V)<0$ throughout $S\ge0.001$ for
+the printed parameters. There is no equilibrium in $\mathcal D$
+for that forcing, and the vector field points through its lower
+$S$ boundary. A projected model has different equilibrium
+conditions. With time-varying inputs, contraction can hold without
+a fixed equilibrium at all.
+
+\section{I-Channel Self-Regulation: Linear vs.\ Logistic}
+\label{app:saturation}
+
+For this scalar comparison hold $S$ and $V$ fixed, and write
+$A=-kS+\beta_I C(V)$. The logistic alternative is
+$\dot I=A-\gamma_I I(1-I)$. If $0<A<\gamma_I/4$, its two
+interior equilibria are
+\begin{equation}
+ I^*_{\pm}=\tfrac12\pm\tfrac12\sqrt{1-4A/\gamma_I}.
+ \label{eq:I-equilibria}
+\end{equation}
+The lower root is stable and the upper root unstable, since
+$\partial\dot I/\partial I=-\gamma_I(1-2I)$. This derivative
+is zero at $I=0.5$ and equals $-\gamma_I$ and $+\gamma_I$ at
+$I=0$ and $I=1$, respectively.
+
+\begin{proposition}[Sufficient Logistic Saturation Condition]
+\label{prop:saturation}
+For constant $A>\gamma_I/4$ and $I(0)\in[0,1)$, the unprojected
+scalar solution reaches $I=1$ in finite time, since
+$\dot I\ge A-\gamma_I/4>0$ on $[0,1]$. Under continuous
+projection to $[0,1]$, it remains at that boundary afterward.
+\end{proposition}
+The diagnostic
+\begin{equation}
+ m_{\mathrm{sat}}=1-4A/\gamma_I
+ \label{eq:saturation-margin}
+\end{equation}
+records this sufficient condition when negative. It is not a
+complete safety or boundary-distance test. At zero margin, a
+start below $0.5$ approaches $0.5$. At positive margin with
+$0<A<\gamma_I/4$, a start above the unstable upper root still
+moves toward $1$. For time-varying forcing, a snapshot of $A$
+does not establish persistence of a saturation condition.
+
+The linear alternative $\dot I=A-\gamma_I I$ has equilibrium
+\begin{equation}
+ I^*=A/\gamma_I,
+ \label{eq:I-star-linear}
+\end{equation}
+which lies in $(0,1)$ exactly when $0<A<\gamma_I$. Its derivative
+is the constant $-\gamma_I$. The reported linear parameter
+$\gamma_I=0.169$ gives $I^*\approx0.80$ when $A\approx0.135$;
+this local tuning statement is not a uniform invariance guarantee.
+
+\paragraph{Historical logistic diagnostic.}
+The following retained snapshot evaluates the diagnostic for
+75 active agents at $\gamma_I=0.25$, $k=0.10$, $\beta_I=0.30$:
+\begin{center}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Regime & Mean $m_{\mathrm{sat}}$ & \% negative\\
+\midrule
+Convergence ($n=24$) & $-1.45$ & 100\%\\
+Exploration ($n=22$) & $-1.18$ & 100\%\\
+Divergence ($n=29$) & $-1.10$ & 100\%\\
+\midrule
+All active ($n=75$) & $-1.23$ & 100\%\\
+\bottomrule
+\end{tabular}
+\end{center}
+Every recorded forcing value exceeds $\gamma_I/4=0.0625$
+under that parameterization. These diagnostic values are not
+observations of every agent reaching the boundary, and they do
+not establish behavior under other parameter histories.
+
+\section{Boundary Clamping and Numerical Scope}
 \label{app:boundary-clamping}
 
-The EISV state is clamped to $\mathcal{X}$ at each integration step,
-introducing non-smoothness at domain boundaries. Three mechanisms
-keep the dynamics well-behaved despite this:
+The historical snapshot records 19 of 903 agents (2.1\%) at
+$I=1$, all in the \texttt{CONVERGENCE} regime with few updates.
+This is descriptive evidence about that snapshot, not a proof
+that the continuous field preserves its interior. The lower
+entropy floor is implemented by a numerical constraint; it
+cannot supply invariance to the unprojected equations.
 
-\paragraph{Interior operation.}
-The epistemic humility floor ($S_{\min} = 0.001$) and the contraction
-dynamics keep trajectories in the interior of $\mathcal{X}$ during
-normal operation. In production, only $19$ of $903$ agents (2.1\%)
-contact the $I = 1$ boundary, all in the \texttt{CONVERGENCE} regime
-with few updates; interior operation is the norm.
+\paragraph{Projection and finite steps.}
+Coordinate clipping to a common box is nonexpansive in a
+constant positive diagonal metric. Thus projection after an
+already-contracting map preserves its contraction factor.
+It does not make an arbitrary Euler or Runge--Kutta step
+contracting. For example, $\dot x=-x$ contracts continuously,
+but Euler with $dt=3$ followed by clipping to $[-1,1]$ doubles
+the distance between $x=0.1$ and $x=0$. A continuous projected
+system and a finite clipped integrator require distinct analyses.
 
-\paragraph{Projected dynamical systems.}
-When boundary contact does occur, the clamping operation implements
-a projection onto the constraint set $\mathcal{X}$. Projected
-dynamical systems preserve contraction properties when the
-constraint set is convex~\cite{lohmiller1998contraction}, which
-$\mathcal{X}$ (a hyperrectangle) is.
+\paragraph{Reproducible implementation counterexample.}
+At UNITARES source revision \texttt{6d742273434c}, the default
+RK4 map with active linear-I parameters, zero drift and noise,
+complexity $0.5$, no sensor coupling and zero entropy setpoint
+gives the following for $dt=0.1$:
+\begin{align*}
+ x&=(0.5,0.999,0.3,0),\\
+ y&=(0.5,0.9990001,0.3,0),\\
+ \|x-y\|_M&\approx4.47214\times10^{-8},\\
+ \|\operatorname{step}(x)-\operatorname{step}(y)\|_M
+   &\approx2.05954\times10^{-7}.
+\end{align*}
+The distance ratio is about $4.60527$, rather than the proposed
+$e^{-0.019(0.1)}\approx0.99810$. Both starts are interior;
+no stage/final clipping or entropy-floor activation occurs in
+this example. The soft barrier introduces strong local damping
+and numerical stiffness; removing only that barrier in the
+isolated counterfactual gives a ratio about $0.983613$.
 
-\paragraph{Pre-emptive tightening.}
-The saturation diagnostic of \Cref{app:saturation} monitors the
-I-channel's distance from the boundary. When $m_{\text{sat}} < 0.1$
-the system logs a warning and the adaptive governor tightens
-thresholds pre-emptively, preventing boundary contact rather than
-relying on clamping to maintain invariance.
+The reproducer in \texttt{scripts/audits/contraction/} exports
+the pinned modules from Git without reading deployment data.
+This counterexample refutes universal contraction of that map;
+it does not establish frequency, reachability, asymptotic divergence
+or instability of the full governor. Later numerical fixes
+require separate validation.
 
+\paragraph{Diagnostics and controller scope.}
+No implemented threshold-tightening path tied to
+$m_{\mathrm{sat}}<0.1$ was located; the earlier preventive claim
+is withdrawn. Certifying the update requires including barriers,
+clipping, feedback and adaptive parameters. Snapshot occupancy
+and saturation diagnostics do not replace that analysis.
 
 \end{document}
