@@ -46,7 +46,7 @@ of Heterogeneous Agent Fleets}
   \texttt{founder@cirwel.org}
 }
 
-\date{Version 6.9.3 --- October 2, 2026}
+\date{Version 6.9.4-draft --- October 11, 2026 (unpublished)}
 
 % ═══════════════════════════════════════════════════════════
 \begin{document}
@@ -97,9 +97,10 @@ A verdict counterfactual on a 30-day production slice
 ($N = 13{,}310$) shows that $28.9\%$ of basin assignments would flip
 under class-conditional grounded coherence, with flip rates ranging
 $15$--$33\%$ per class and a strong directional bias into the
-\texttt{low} basin. The flips are largely mechanical: the legacy
-coherence is nearly constant (about $0.49$ for every agent), so
-substituting any varying score moves basins. The counterfactual
+\texttt{low} basin. The legacy coherence is nearly constant (about $0.49$ in the
+reported deployment). The replacement changes basin labels where
+its values cross the classifier's operative thresholds; variation
+alone does not imply a basin change. The counterfactual
 shows that the formula choice changes gating labels; it does not
 show that the new labels are correct, since no outcome grades
 either form. A first per-class calibration
@@ -108,13 +109,13 @@ constants and higher-tier estimators (logprob and multi-sample) are
 deferred to subsequent work.
 \end{abstract}
 
-\noindent\textit{Version note (6.9.3, October 2026).} This version
-states in the abstract, the model section and the conclusion what
-earlier versions said only in the body: the information-theoretic
-definitions are target semantics, and the deployed system computes
-all four coordinates with tier-3 heuristic estimators. It also
-qualifies the stability and counterfactual claims and corrects the
-production start date to November 2025.
+\noindent\textit{Version note (6.9.4-draft, October 2026; unpublished).}
+This revision separates the operational transform's mathematical
+range from its observed concentration and narrows the corresponding
+causal and threshold claims. It retains the measured results and
+the contraction certificate's stated scope. Version 6.9.3's
+clarifications of target semantics, heuristic estimators and the
+production start date remain in place.
 
 \textbf{Keywords:} autonomous governance, information theory,
 variational free energy, heterogeneous multi-agent systems,
@@ -568,14 +569,16 @@ operational form.
 
 \begin{remark}[Operating Range]
 \label{rem:operating-range}
-In production, the damping term $\delta V$ in \eqref{eq:dV} constrains
-$V$ to approximately $[-0.1, 0.1]$, yielding $C(V) \approx 0.49$; the
-empirical distribution is reported in \Cref{sec:experiments}. The
-narrow range near the coherence-function midpoint is the operational
-consequence of the damping analysis. It is also a limitation: a
-coherence that barely varies across agents carries little
-information for gating (\Cref{sec:experiments},
-\Cref{sec:verdict-counterfactual}).
+For unit gain and ceiling, $V \in [-0.1, 0.1]$ maps to
+$C(V) \in [0.450166\ldots, 0.549834\ldots]$. The deployment's
+observed concentration near $0.49$ (\Cref{sec:experiments}) is an
+empirical property of its input trajectory; the transform alone
+does not determine that center. Damping is part of the dynamics,
+but the evidence presented here does not isolate its causal
+contribution to the observed distribution. Assess this score's
+decision contribution against the deployed thresholds, separately
+from information retained in its variation
+(\Cref{sec:verdict-counterfactual}).
 \end{remark}
 
 \subsection{Adaptive Entropy Coupling}
@@ -1661,12 +1664,14 @@ of the dynamics:
 \item \textbf{Low entropy:} Mean $S = 0.082$ with strong decay ($\mu
   = 0.8$) indicates effective uncertainty management.
 \item \textbf{Coherence at 0.49:} The observed mean $C = 0.483$
-  (\Cref{fig:coherence-hist}) is consistent with
-  Remark~\ref{rem:operating-range}: coherence sits near the
-  midpoint for every agent, so it barely separates them.
+  (\Cref{fig:coherence-hist}) lies near the transform midpoint.
+  This observed concentration does not by itself determine the
+  information in the score or its contribution to threshold decisions
+  (Remark~\ref{rem:operating-range}).
 \item \textbf{$V$ confined to $[-0.1, 0.1]$:} 100\% of active agents
-  have $V$ within $[-0.089, 0.007]$ (\Cref{fig:sv-scatter}), validating
-  the damping analysis.
+  have $V$ within $[-0.089, 0.007]$ (\Cref{fig:sv-scatter}). This
+  snapshot records a narrow operating range; it does not isolate
+  damping's causal contribution to that range.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -1936,12 +1941,14 @@ Watcher   &    0 &  67 &   0 \\
 
 \textbf{Interpretation.} The formula change is not a cosmetic
 relabeling even when both quantities live in $[0,1]$: it changes
-basin labels for $15$--$33\%$ of rows per class. Much of that is
-mechanical. The legacy form is nearly constant (about $0.49$ for
-every agent; \Cref{sec:experiments}), so substituting any varying
-score moves basins. The rest reflects the structural difference
-between a fleet-wide $\tanh$ of $V$ and a class-conditional
-distance from each class's measured healthy operating point.
+basin labels for $15$--$33\%$ of rows per class. The legacy form
+is nearly constant (about $0.49$ in the reported deployment;
+\Cref{sec:experiments}). The replacement changes labels where its
+values cross the classifier's operative thresholds; variation alone
+does not imply a basin change. This comparison combines a change
+from a fleet-wide $\tanh$ of $V$ to a distance-based score with
+class-conditional calibration; it does not isolate their separate
+contributions.
 
 The flip direction is informative. The dominant transition is into
 the \texttt{low} basin: agents that the production server
