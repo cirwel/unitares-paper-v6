@@ -41,9 +41,11 @@ abstract: >
   deployed governance framework can acquire new coordinate semantics
   without breaking live behavior; we argue this mechanism generalizes to
   any deployed agent framework facing a semantic-coordinate change. A
-  contraction certificate (Appendix B) holds for the deployed dynamics; a
-  deployment that consumes a grounded coherence must be re-certified
-  (Remark 5.1).
+  corrected contraction certificate (Appendix B) covers the printed
+  fixed-parameter continuous vector field while trajectories remain in its
+  stated domain and share exogenous inputs. It does not certify the
+  implemented finite-step update or adaptive governor; a grounded coherence
+  also requires re-certification (Remark 5.1).
 
   We illustrate the framework with a production deployment snapshot from
   February 20, 2026, covering 903 registered agents and 75 active agents.
