@@ -1,14 +1,23 @@
-# UNITARES v6 — Release preparation
+# UNITARES v6 — Release record and procedure
 
-The source, PDF and metadata are prepared as **v6.9.4**, dated October 13,
-2026. Archive publication is pending. Preparing or merging this revision does
-not publish it; the latest verified archived revision remains `paper-v6.9.3`
-(version DOI `10.5281/zenodo.23110717`). The intended tag is `paper-v6.9.4`.
+**v6.9.4 was published on October 13, 2026.**
 
-The deposit artifact is `unitares-v6.pdf`; `.zenodo.json` supplies the
-description and publication metadata. The existing publication workflow uses
-the full tag (`paper-v6.9.4`) as Zenodo's version string. The reviewed Git tag
-retains source, figures and audit scripts; the Zenodo deposit is PDF-only.
+- GitHub release/tag: [`paper-v6.9.4`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.4)
+- Tagged source revision: `bea98859949709494ccf368d63fc3f36213c50d6`
+- Version DOI: [10.5281/zenodo.23337711](https://doi.org/10.5281/zenodo.23337711)
+- Concept DOI: [10.5281/zenodo.19647159](https://doi.org/10.5281/zenodo.19647159)
+
+The deposited artifact is `unitares-v6.pdf` (33 pages). The publicly downloaded
+Zenodo file and GitHub release asset were verified against the approved PDF:
+SHA-256 `f5491a859333a6765340d4398a785a2ef85f1453d9026629479b953fdfb11e86`;
+MD5 `a92d2c1aedceee052703192b8c70cc1a`. The public record's title, description,
+publication date and version were checked. The archive uses the full tag
+`paper-v6.9.4` as its version string.
+
+The Zenodo deposit is PDF-only. Source, figures and audit scripts remain at the
+reviewed Git tag. The prior [v6.9.3 deposit](https://doi.org/10.5281/zenodo.23110717)
+is preserved. `.zenodo.json` supplied the publication metadata; `CITATION.cff`
+and the README now identify the verified version DOI.
 
 ## Source of release metadata
 
@@ -36,11 +45,12 @@ already reported in this paper; higher-tier estimators remain future work.
 
 ## Publish only when the author chooses to release
 
-The draft suffix has been removed consistently and the planned publication
-date in `.zenodo.json` is `2026-10-13`. After the deposit is confirmed, add its
-version DOI and actual `date-released` to `CITATION.cff`, update the citation
-and latest-published pointers in `README.md`, and remove the pending status.
-If publication occurs on another date, update the release metadata first. The version synchronization script edits both this repository and
+For a future release, remove any draft suffix consistently and set the planned
+publication date. After the deposit is confirmed, add its version DOI and
+actual `date-released` to `CITATION.cff`, update the README citation and
+latest-published pointers, and remove any pending status. If publication occurs
+on another date, update the release metadata first. The version synchronization
+script edits both this repository and
 its companion UNITARES checkout, so inspect its scope before using it. It does
 not rebuild the PDF or synchronize the abstract.
 
@@ -54,5 +64,5 @@ After publication, verify the GitHub asset and Zenodo record against the
 released PDF, version, abstract and date before claiming the deposit is current.
 Keep the concept DOI (`10.5281/zenodo.19647159`) distinct from the new version DOI.
 Corrections to an archived paper belong in a new version; do not silently
-replace a prior version's claims or artifacts. This revision does not assert
-that the existing live deposits have been audited.
+replace a prior version's claims or artifacts. The verification record above
+applies to v6.9.4; it is not a re-audit of every prior deposit.
