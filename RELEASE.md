@@ -14,7 +14,8 @@ no separately maintained abstract to copy from this file.
 Before a release, check that the abstract in `CITATION.cff` and the description
 in `.zenodo.json` match that source. In particular, retain the distinctions
 between target semantics and deployed estimators, the scope of the contraction
-certificate, and label changes versus correctness. Per-class calibration is
+certificate, basin labels versus intervention decisions, and the distinction
+between the historical table and its nearby archived export. Per-class calibration is
 already reported in this paper; higher-tier estimators remain future work.
 
 ## Prepare a reviewable revision
