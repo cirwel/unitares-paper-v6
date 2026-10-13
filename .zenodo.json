@@ -31,6 +31,7 @@
       "scheme": "url"
     }
   ],
-  "notes": "Unpublished working revision 6.9.4-draft (2026-10-13). Corrects the continuous contraction proof and states its fixed parameters, domain and common-input assumptions. Separates this certificate from the numerical update and adaptive governor; corrects stochastic, network, equilibrium and logistic claims. Includes an offline finite-step counterexample and reproducer. Also separates the coherence transform range from its observed concentration. Historical measurements are retained. The October 13 update corrects data access, discloses the nearby archived export, and distinguishes basin-label changes from intervention decisions. No release or DOI has been issued for this revision.",
-  "version": "v6.9.4-draft"
+  "notes": "Version 6.9.4 (2026-10-13). Corrects the continuous contraction proof and states its fixed parameters, domain and common-input assumptions. Separates this certificate from the numerical update and adaptive governor; corrects stochastic, network, equilibrium and logistic claims. Includes an offline finite-step counterexample and reproducer. Also separates the coherence transform range from its observed concentration. Historical measurements are retained. The October 13 update corrects data access, discloses the nearby archived export, and distinguishes basin-label changes from intervention decisions.",
+  "version": "v6.9.4",
+  "publication_date": "2026-10-13"
 }

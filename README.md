@@ -6,7 +6,7 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Latest published: paper-v6.9.3](https://img.shields.io/badge/latest-paper--v6.9.3-brightgreen.svg)](https://github.com/CIRWEL/unitares-paper-v6/releases/latest)
 
-- 📄 [`unitares-v6.pdf`](./unitares-v6.pdf) — the working paper (v6.9.4-draft, unpublished; latest published tag [`paper-v6.9.3`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.3))
+- 📄 [`unitares-v6.pdf`](./unitares-v6.pdf) — the prepared v6.9.4 release (October 13, 2026; archive publication pending; latest published tag [`paper-v6.9.3`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.3))
 - 📝 [`unitares-v6.tex`](./unitares-v6.tex) — LaTeX source
 - 🖼 [`figures/`](./figures/) — 6 figures from deployment data (Feb 20, 2026 snapshot; Apr 18, 2026 30-day window)
 - 🗒 [Release history](https://github.com/CIRWEL/unitares-paper-v6/releases) — per-version notes and frozen PDFs
@@ -98,8 +98,8 @@ Required packages: `amsmath`, `amssymb`, `mathtools`, `bm`, `graphicx`, `booktab
 
 Per-release notes and frozen PDFs are on the [GitHub releases page](https://github.com/CIRWEL/unitares-paper-v6/releases). Headline deltas:
 
-- **v6.9.4-draft (unpublished)** — separates the transform's range from its observed center, removes an unsupported causal attribution to damping, and distinguishes score variation from crossing an operative threshold. Repairs the contraction proof and limits its certificate to the printed continuous field under explicit conditions; corrects the stochastic, network, equilibrium and logistic claims. Adds source-pinned offline mathematical and numerical reproductions. Historical measured results remain unchanged. The October 13 update adds archived-data access and distinguishes basin labels from intervention decisions. Release instructions source the abstract from the exact release revision.
-- **v6.9.3** — claim correction: the abstract, model section and conclusion now say the information-theoretic definitions are target semantics and the deployed estimators are tier-3 heuristics; the release retained a stability claim later corrected in v6.9.4-draft; the 28.9% counterfactual is described as largely mechanical (the legacy coherence is nearly constant) and as showing label changes, not correctness; production start corrected to November 2025.
+- **v6.9.4 (prepared for release; archive publication pending)** — separates the transform's range from its observed center, removes an unsupported causal attribution to damping, and distinguishes score variation from crossing an operative threshold. Repairs the contraction proof and limits its certificate to the printed continuous field under explicit conditions; corrects the stochastic, network, equilibrium and logistic claims. Adds source-pinned offline mathematical and numerical reproductions. Historical measured results remain unchanged. The October 13 update adds archived-data access and distinguishes basin labels from intervention decisions. Release instructions source the abstract from the exact release revision.
+- **v6.9.3** — claim correction: the abstract, model section and conclusion now say the information-theoretic definitions are target semantics and the deployed estimators are tier-3 heuristics; the release retained a stability claim later corrected in v6.9.4; the 28.9% counterfactual is described as largely mechanical (the legacy coherence is nearly constant) and as showing label changes, not correctness; production start corrected to November 2025.
 - **v6.8** — operational-honesty bump: §12.4 adds a paragraph on the 2026-04-20 KG retrieval rebuild (pre-rebuild semantic scores sat at noise floor; fleet-learning claims now bounded by that era); §12.5 adds item 6 explicitly caveating retrieval-infrastructure and the PR-#54 auto-ephemeral write-bug. Grounded EISV counterfactual unaffected (inputs are `core.agent_state`, not KG content).
 - **v6.7** — drift correction: runtime removed the CIRS v2 neighbor-pressure coupling on 2026-04-17; paper caught up by excising §Multi-Agent Coordination and reframing §Multi-Agent Network as a theoretical extension. §11.6 headline finding unaffected.
 - **v6.6** — added §11.7 identity-system-maturity disclosure; added identity hardening track to §14.5 future work.
@@ -109,21 +109,19 @@ Per-release notes and frozen PDFs are on the [GitHub releases page](https://gith
 
 ## Citation
 
-The citation below describes the published v6.9.3. The working source, PDF and `CITATION.cff` describe v6.9.4-draft; no release or DOI has been issued for this revision.
+The citation below describes the prepared v6.9.4 source and PDF. Archive publication is pending; its version DOI and `date-released` will be added after the deposit is verified. The latest archived revision remains [v6.9.3](https://doi.org/10.5281/zenodo.23110717).
 
 ```bibtex
 @article{wang2026unitares-v6,
   author    = {Wang, Kenny},
   title     = {{UNITARES}: Information-Theoretic Governance of Heterogeneous Agent Fleets},
   year      = {2026},
-  publisher = {Zenodo},
-  doi       = {10.5281/zenodo.19647159},
-  url       = {https://doi.org/10.5281/zenodo.19647159},
-  version   = {v6.9.3}
+  url       = {https://github.com/CIRWEL/unitares-paper-v6},
+  version   = {v6.9.4}
 }
 ```
 
-The concept DOI above resolves to the latest version; each tagged release (`paper-v6.0` through `paper-v6.9.3`) has its own version DOI.
+The [concept DOI](https://doi.org/10.5281/zenodo.19647159) resolves to the latest archived version. Use a version DOI when citing a particular release; preparing or merging v6.9.4 does not itself update that archive.
 
 ## License
 
