@@ -12,7 +12,9 @@
 % \usepackage{algorithm}     % unused; re-enable if you add algorithm envs
 % \usepackage{algorithmic}   % unused; re-enable if you add algorithmic envs
 \usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={UNITARES: Information-Theoretic Governance of Heterogeneous Agent Fleets},
+  pdfauthor={Kenny Wang},pdfsubject={Version 6.9.4-draft; unpublished}}
 \usepackage{cleveref}
 \usepackage{natbib}
 \usepackage{xcolor}
@@ -46,7 +48,7 @@ of Heterogeneous Agent Fleets}
   \texttt{founder@cirwel.org}
 }
 
-\date{Version 6.9.4-draft --- October 12, 2026 (unpublished)}
+\date{Version 6.9.4-draft --- October 13, 2026 (unpublished)}
 
 % ═══════════════════════════════════════════════════════════
 \begin{document}
@@ -55,61 +57,44 @@ of Heterogeneous Agent Fleets}
 % ─── Abstract ──────────────────────────────────────────────
 \begin{abstract}
 UNITARES is a runtime governance layer for heterogeneous AI-agent
-fleets. It tracks continuous agent state, calibrates by class,
-detects drift, and issues governance interventions with auditable
-provenance. Each agent carries a four-dimensional state vector
-$\eisv = (E, I, S, V)^\top$ updated on every check-in, intended to
-support continuous governance rather than discrete after-the-fact
-filtering. Fleet-wide normalization is the wrong target: the
-populations we govern---embodied agents with sensor-driven state,
-persistent autonomous services, session-bounded coding assistants,
-and ephemeral parser agents---do not share an output modality, a
-tempo, or a healthy operating point.
+fleets. It updates a four-dimensional state estimate
+$\eisv = (E,I,S,V)^\top$ at each check-in and records governance
+interventions. We describe its February--April~2026 deployment,
+a class-conditional calibration protocol, and a migration method
+for changing reported coordinate semantics while preserving the
+existing decision path.
 
-UNITARES addresses this with two structural moves. First, it
-specifies information-theoretic target semantics for the EISV
-coordinates: $S$ as response-distribution entropy, $I$ as
-context-response mutual information, $E$ as negative variational
-free energy, and $V$ as an accumulated free-energy residual. These
-are targets. The deployed system computes all four coordinates
-with tier-3 heuristic estimators; the higher-tier estimators that
-would compute them as specified are not yet implemented. Second, it makes
-normalization class-conditional: scale constants and healthy
-operating points are functions of an agent class keyed on
-existing identity tags, with fleet-wide defaults retained only as
-fallback behavior.
+The proposed information-theoretic semantics are response-distribution
+entropy ($S$), context-response mutual information ($I$), negative
+variational free energy ($E$), and an accumulated free-energy
+residual ($V$). These are research targets: the reported deployment
+uses tier-3 heuristic estimators, and the specified logprob and
+multi-sample estimators remain unimplemented. Class-specific healthy
+operating points and manifold radii are measured for five agent
+classes; the remaining higher-tier scale constants are placeholders.
 
-Because UNITARES was already deployed, re-grounding the
-coordinates raised a live-systems problem in addition to a
-mathematical one. We introduce a pipeline-ordering migration
-mechanism that separates decision-producing from
-presentation-producing pipeline stages so a deployed governance
-framework can acquire new coordinate semantics without breaking
-live behavior; we argue this mechanism generalizes to any
-deployed agent framework facing a semantic-coordinate change.
-A corrected contraction certificate (\Cref{app:contraction-proof})
+The empirical record includes a February~20 snapshot of 903
+registered agents, 75 of them active, and a separate April~18
+basin-label counterfactual on $13{,}310$ state observations. Replacing
+the legacy $\tanh$ coherence with a class-conditional distance score
+changes $28.9\%$ of basin assignments, predominantly into the
+\texttt{low} basin. The legacy score is nearly constant (about
+$0.49$), and labels change where the replacement crosses classifier
+thresholds. This comparison changes both the formula and calibration;
+it does not isolate the value of class conditioning, replay the
+intervention pipeline, or establish which labels are correct.
+The surviving public export is a nearby pull ($N=13{,}292$;
+$28.8\%$ stored-label flips), not an exact archive of that table.
+
+The migration mechanism orders decision-producing stages before
+presentation-producing enrichment. A corrected contraction certificate
 covers the printed fixed-parameter continuous vector field while
 trajectories remain in its stated domain and share exogenous inputs.
 It does not certify the implemented finite-step update or adaptive
-governor; a grounded coherence also requires re-certification
-(\Cref{rem:phase3-contraction}).
-
-We illustrate the framework with a production deployment snapshot from
-February 20, 2026, covering 903 registered agents and 75 active agents.
-A verdict counterfactual on a 30-day production slice
-($N = 13{,}310$) shows that $28.9\%$ of basin assignments would flip
-under class-conditional grounded coherence, with flip rates ranging
-$15$--$33\%$ per class and a strong directional bias into the
-\texttt{low} basin. The legacy coherence is nearly constant (about $0.49$ in the
-reported deployment). The replacement changes basin labels where
-its values cross the classifier's operative thresholds; variation
-alone does not imply a basin change. The counterfactual
-shows that the formula choice changes gating labels; it does not
-show that the new labels are correct, since no outcome grades
-either form. A first per-class calibration
-of the manifold-coherence path is reported here; the remaining scale
-constants and higher-tier estimators (logprob and multi-sample) are
-deferred to subsequent work.
+governor; an offline implementation counterexample illustrates this
+boundary. The paper establishes a framework and bounded descriptive
+results, not a validation of intervention quality or the proposed
+information-theoretic estimators.
 \end{abstract}
 
 \noindent\textit{Version note (6.9.4-draft, October 2026; unpublished).}
@@ -119,7 +104,15 @@ implemented numerical update. It also corrects the stochastic,
 network and equilibrium claims and distinguishes the coherence
 transform's range from its observed concentration. Historical
 measurements are retained; their interpretation does not depend
-on a deployment stability certificate.
+on a deployment stability certificate. The October~13 update also
+corrects the data-access instructions and distinguishes basin-label
+changes from unmeasured changes to intervention decisions.
+
+\noindent\textit{Evidence dates.} The deployment observations below
+come from February--April~2026. Descriptions of the deployed system
+refer to that period unless a later date is explicit; this paper is
+not a specification of the current service. The archived results
+are not refreshed by later software or identity-system changes.
 
 \textbf{Keywords:} autonomous governance, information theory,
 variational free energy, heterogeneous multi-agent systems,
@@ -149,16 +142,15 @@ state vector is classified under different coherence formulas.
 
 Autonomous AI agents operating in production environments face a
 fundamental tension: they must explore to learn, yet remain safe
-while doing so. Existing approaches to agent governance fall into
-two camps. \emph{Hard constraints} (guardrails, output filters)
-provide safety but impede capability. \emph{Soft monitoring}
-(logging, dashboards) preserves capability but offers no formal
-guarantees.
+while doing so. Agent-governance systems combine constraints such as guardrails
+and output filters with monitoring such as logs and dashboards.
+Their safety and capability tradeoffs depend on the threat model,
+instrumentation, and intervention policy.
 
 We argue that governance should be \emph{intrinsic}: a
 continuous dynamical process that shapes agent behavior from
-within, producing leading indicators of degradation rather than
-binary verdicts after the fact. This paper presents UNITARES, a
+within. We intend the state to support early warning; predictive
+validity must be measured against outcomes. This paper presents UNITARES, a
 framework
 in which each agent carries a four-dimensional state
 $\eisv = (E, I, S, V)^\top$ whose evolution is governed by coupled
@@ -215,7 +207,7 @@ This paper makes five contributions:
   grounded coherence, predominantly into the \texttt{low} basin.
   Because the legacy coherence is nearly constant, the direction is
   largely mechanical: the counterfactual shows that the formula
-  choice changes gating labels, not that the new labels are
+  choice changes basin labels, not that the new labels are
   correct.
 \end{enumerate}
 
@@ -240,11 +232,11 @@ $S_{\text{scale}}, I_{\text{scale}}, E_{\text{scale}}$ constants
 remain placeholders awaiting those estimators landing. Second, the
 highest-fidelity estimators for grounded quantities (logprob-based
 and multi-sample computation) remain future instrumentation work;
-the current deployment relies on degraded-mode fallbacks where
+the reported deployment relies on degraded-mode fallbacks where
 those signals are unavailable. Third, the deployment results in
-\Cref{sec:experiments} are presented as a single descriptive
-production snapshot rather than a controlled validation study
-across stable parameter regimes.
+\Cref{sec:experiments} combine a February snapshot with a separate
+April calibration and counterfactual window, not a controlled
+validation study across stable parameter regimes.
 
 The paper should therefore be read as establishing the framework, the
 migration mechanism, and the shape of the empirical program, while
@@ -1020,7 +1012,7 @@ agent-facing skills) expand the verdict into four labels
 \texttt{reject}, where \texttt{guide} is a \texttt{proceed} carrying
 soft advisory text and \texttt{reject} is a \texttt{pause} carrying
 a recovery requirement. The audit schema records a distinct view:
-\texttt{governance.audit.outcome\_events.eisv\_verdict} stores risk
+\nolinkurl{governance.audit.outcome_events.eisv_verdict} stores risk
 bands \texttt{safe} / \texttt{caution} / \texttt{high-risk} derived
 from the risk score $R$ of \Cref{eq:phi}, while hard pauses are
 emitted separately as \texttt{lifecycle\_paused} and
@@ -1553,10 +1545,11 @@ class's own envelope.
 \section{Experiments}
 \label{sec:experiments}
 
-This section reports a single production snapshot of the deployed
-UNITARES system measured on February 20, 2026. All counts, tables, and
-figures in this section are intended to describe that snapshot unless
-explicitly stated otherwise. The purpose of the section is not to claim
+This section reports a February~20,~2026 deployment snapshot,
+followed by a separate calibration and basin-label counterfactual
+on a 30-day window ending April~18,~2026. The first four
+subsections describe the February snapshot except where a later
+operational correction is explicitly dated. The purpose of the section is not to claim
 full empirical validation of the grounded, class-conditional framework;
 rather, it documents the operating characteristics of the deployed
 system, the behavior of the existing dynamics in production, and the
@@ -1771,7 +1764,7 @@ corpus size they showed no aggregate gain. The rebuild is
 prerequisite to any empirical claim that relies on agents
 \emph{using} prior discoveries rather than merely \emph{storing}
 them; documentation and baselines live in the governance repository
-under \texttt{docs/plans/2026-04-20-kg-retrieval-rebuild.md}.
+under \nolinkurl{docs/plans/2026-04-20-kg-retrieval-rebuild.md}.
 
 \begin{figure}[t]
 \centering
@@ -1828,9 +1821,9 @@ fleet-wide normalization at the placeholder value would have
 produced a manifold coherence saturating near $1.0$ for every
 agent regardless of state---essentially a constant signal. This
 is the quantitative motivation behind the homogenization argument
-of \Cref{sec:heterogeneity}: a fleet-wide constant chosen to
-cover the worst case (or chosen arbitrarily) loses discriminating
-power within any class.
+of \Cref{sec:heterogeneity}: an overly broad normalization radius can reduce within-class
+score variation. Whether a measured fleet-wide radius performs
+worse than the class-specific radii requires a separate comparison.
 
 Second, the healthy operating points cluster more tightly on
 $E$ and $I$ than on $S$. Across the five measured classes,
@@ -1857,7 +1850,7 @@ different inputs than the legacy operational form
 (\Cref{eq:coherence}): the grounded form computes a
 class-conditional distance from $(E,I,S)_{\text{healthy}}(c)$,
 while the legacy form maps $V$ through $\tanh$. The choice of
-coherence formula can therefore change gating labels, not just the
+coherence formula can therefore change basin labels, not just the
 raw value reported. We quantify this directly by
 re-running the basin-classification step on a counterfactual in
 which the grounded form replaces the legacy form on the same
@@ -1942,38 +1935,52 @@ from a fleet-wide $\tanh$ of $V$ to a distance-based score with
 class-conditional calibration; it does not isolate their separate
 contributions.
 
-The flip direction is informative. The dominant transition is into
-the \texttt{low} basin: agents that the production server
-classified as healthy (or borderline) under the fleet-wide form
-are classified as breaching at least one bound under the
-class-conditional grounded form. This is consistent with
-the homogenization-failure-mode argument of
-\Cref{sec:heterogeneity}: a fleet-wide constant spanning the
-worst-case envelope is, by construction, permissive relative to
-per-class envelopes, and the flip data quantifies how often that
-permissiveness changes the verdict. The magnitude of the
-consequence (29\% fleet-wide, up to 33\% per class) is empirical;
-the directional asymmetry is a mechanical consequence of
-replacing a fleet-wide envelope with per-class envelopes, not an
-independent corroboration of the theory that motivated the
-replacement.
+The dominant transition is into the \texttt{low} basin: state
+vectors labeled healthy or borderline by the historical classifier
+are reclassified as breaching a bound under the replacement score.
+The magnitude (29\% fleet-wide, up to 33\% per class) describes
+this paired label comparison. Its directional asymmetry depends
+on the two formulas, the observed states, and the classifier
+thresholds; it is not independent evidence that class-conditional
+calibration improves governance. Isolating that contribution would
+require a fleet-wide distance-score baseline with the same inputs
+and formula.
 
-We do \emph{not} claim that the grounded form is normatively
-``correct'' in every flip---a flip into \texttt{low} would surface
-a \texttt{guide} or \texttt{pause} verdict that the legacy form
-suppressed, and whether that is desirable depends on the
-agent. The contribution of this counterfactual is to establish
-that the formula choice matters at the verdict level, not just at
-the reported-value level. Calibration of which form should drive
-governance decisions, and per-class tuning of the manifold radii
-to match operator preferences, is left to subsequent work.
+The script replays the basin classifier, not the complete decision
+pipeline or its controller history. A flip into \texttt{low}
+therefore does not establish that an agent would receive a
+\texttt{guide} or \texttt{pause} intervention. Neither label set
+has outcome grades in this comparison. Whether the replacement
+helps operators choose interventions remains an empirical question.
 
-\textbf{Reproducibility.} The script that produces this table
-(\texttt{scripts/verdict\_counterfactual.py}) is committed
-alongside the calibration script. Running it against the
-production database reproduces the per-class breakdown; running
-with \texttt{-{}-csv} produces a row-level dump for further
-analysis.
+\textbf{Data availability and reproducibility.} The public
+\href{https://doi.org/10.5281/zenodo.19705151}{reproducibility kit}
+archives two CSV exports and an offline counting script. Its
+\href{https://github.com/cirwel/unitares-repro-v6/tree/2d6955bf69877f2a2baa343928376896a5e254a9}{pinned repository revision}
+contains \texttt{analysis.py}; it reads the archived rows without
+a database. The submission export contains $13{,}292$ rows and
+$3{,}831$ stored-label flips ($28.8\%$), compared with the original
+table's $13{,}310$ rows and $3{,}844$ flips. These are distinct pulls;
+the export does not exactly reproduce the table, and the missing
+rows cannot be reconstructed from the export. We retain the
+historical table rather than silently substitute the nearby pull.
+Recomputing scores from rounded exported coordinates is a further
+check, distinct from counting stored labels.
+
+The second archived window, ending April~23, contains $16{,}879$
+rows and $7{,}476$ stored-label flips ($44.3\%$) under the frozen
+calibration constants. This is a different, overlapping observation
+window, not an independent replication or evidence of a stable
+intervention benefit. It demonstrates the window dependence of
+the descriptive percentage.
+
+The production database no longer retains the full April windows,
+as documented in the kit's August~14 retention check. The live-query
+script is provenance only: rerunning it may return fewer rows
+without an error and cannot recover the historical result.
+No exact raw archive of the calibration's healthy-regime input
+is supplied here either; the printed constants are the record of
+that measurement.
 
 \subsection{Limits of the Snapshot}
 \label{sec:limits-snapshot}
@@ -2006,7 +2013,10 @@ our empirical claims:
   migration; the snapshot is preserved as historical record and is
   not reproducible against the current schema. Per-class envelopes
   and the verdict counterfactual were run against the post-migration
-  PostgreSQL store and remain reproducible from current data.
+  PostgreSQL store. Those live rows have since expired; the public
+  CSVs preserve nearby counterfactual exports, not the exact
+  calibration input or original table (see the data-availability
+  statement in \Cref{sec:verdict-counterfactual}).
 \item \textbf{Identity-system maturity:} The measurement window
   includes material revisions to the identity-resolution layer that
   landed in mid-to-late April~2026---removal of name-claim lookup,
@@ -2259,7 +2269,7 @@ $(E, I, S, V) = (0.77, 0.88, 0.08, -0.03)$ with healthy
 $\norm{\deta}^2 \lesssim 0.01$:
 \begin{center}
 \small
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lrl@{}}
 \toprule
 \textbf{Weight} & $\partial\Phi/\partial w_i$ & \textbf{Sign} \\
@@ -2378,7 +2388,10 @@ appear in \Cref{sec:experiments}; \Cref{sec:phase-2-measurement}
 reports a first class-conditional measurement for the
 manifold-coherence path, and
 \Cref{sec:verdict-counterfactual} shows that $28.9\%$ of basin
-assignments flip under the grounded counterfactual. The remaining
+assignments flip under the historical counterfactual. This
+is a label comparison, not a measurement of intervention quality;
+the nearby public export and its limits are documented in that
+section. The remaining
 scale constants and higher-tier estimators are deferred to
 subsequent work following the measurement protocol of
 \Cref{sec:class-calibration}.
@@ -2501,7 +2514,8 @@ T.~Rebedea, R.~Dinu, M.~Sreedhar, C.~Parisien, and J.~Cohen.
 
 \bibitem[Ravindran(2025)]{ravindran2025moral}
 S.~Ravindran.
-\newblock A predictive framework for {AI} value alignment and drift prevention.
+\newblock Moral Anchor System: A predictive framework for {AI} value
+  alignment and drift prevention.
 \newblock \emph{arXiv preprint arXiv:2510.04073}, 2025.
 
 \bibitem[Kuhn et~al.(2023)]{kuhn2023semantic}
@@ -2511,23 +2525,16 @@ L.~Kuhn, Y.~Gal, and S.~Farquhar.
 \newblock In \emph{ICLR}, 2023.
 \newblock arXiv:2302.09664.
 
-\bibitem[Wang et~al.(2025a)]{wang2025mi9}
+\bibitem[Wang et~al.(2025)]{wang2025mi9}
 C.~L. Wang, T.~Singhal, A.~Kelkar, and J.~Tuo.
-\newblock {MI9} -- agent intelligence protocol: Runtime governance for agentic {AI}
-  systems.
-\newblock \emph{arXiv preprint arXiv:2508.03858}, 2025.
+\newblock {MI9}: An integrated runtime governance framework for agentic {AI}.
+\newblock \emph{arXiv preprint} \href{https://arxiv.org/abs/2508.03858v4}{arXiv:2508.03858v4}, 2025.
 
 \bibitem[Rath(2026)]{rath2026agentdrift}
 A.~Rath.
 \newblock Agent drift: Quantifying behavioral degradation in multi-agent {LLM}
   systems over extended interactions.
 \newblock \emph{arXiv preprint arXiv:2601.04170}, 2026.
-
-\bibitem[Carson(2025)]{carson2025stochastic}
-J.~D. Carson.
-\newblock A stochastic dynamical theory of {LLM} self-adversariality: Modeling
-  severity drift as a critical process.
-\newblock \emph{arXiv preprint arXiv:2501.16783}, 2025.
 
 \bibitem[Ames et~al.(2019)]{ames2019control}
 A.~D. Ames, S.~Coogan, M.~Egerstedt, G.~Notomista, K.~Sreenath, and
@@ -2545,11 +2552,12 @@ K.~It\^{o}.
 \newblock Stochastic integral.
 \newblock \emph{Proceedings of the Imperial Academy}, 20(8):519--524, 1944.
 
-\bibitem[Wang et~al.(2025b)]{wang2025probguard}
+\bibitem[Wang et~al.(2026)]{wang2025probguard}
 H.~Wang, C.~M. Poskitt, J.~Wei, and J.~Sun.
-\newblock {ProbGuard}: Probabilistic runtime monitoring for {LLM} agent
-  safety.
-\newblock \emph{arXiv preprint arXiv:2508.00500}, 2025.
+\newblock {ProbGuard}: Proactive runtime monitoring for {LLM} agent
+  safety via probabilistic prediction.
+\newblock In \emph{ASE}, pages 1470--1482, 2026.
+\newblock \href{https://doi.org/10.1145/3832783.3837413}{doi:10.1145/3832783.3837413}.
 
 \end{thebibliography}
 
@@ -2633,7 +2641,7 @@ $\beta$ floor/ceil & $\beta$ & 0.20/0.70 & Hard bounds \\
 \footnotesize
 \caption{Behavioral--Epistemic Drift Vector Parameters}
 \label{tab:drift}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}llrl@{}}
 \toprule
 \textbf{Parameter} & \textbf{Symbol} & \textbf{Val.} & \textbf{Role} \\
@@ -2662,7 +2670,7 @@ manifold-coherence path is now measured class-conditionally in
 \Cref{tab:per-class}; the remaining constants below remain
 Phase~1 placeholders pending tier-1/tier-2 calibration work.}
 \label{tab:scale-constants}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lllll@{}}
 \toprule
 \textbf{Constant} & \textbf{Sym.} & \textbf{Val.} & \textbf{Pctl} & \textbf{Prov.} \\
