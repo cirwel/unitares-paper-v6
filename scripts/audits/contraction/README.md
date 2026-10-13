@@ -1,6 +1,6 @@
 # Continuous and numerical contraction checks
 
-These offline checks accompany the unpublished v6.9.4 draft. They reproduce
+These offline checks accompany v6.9.4. They reproduce
 mathematical arithmetic and source-level counterexamples, without a running
 UNITARES server, database, outcome data or trial statistics.
 

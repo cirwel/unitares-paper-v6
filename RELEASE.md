@@ -1,8 +1,14 @@
 # UNITARES v6 — Release preparation
 
-The working source and PDF are **v6.9.4-draft (unpublished)**. Preparing or merging
-this revision does not publish it. The latest published revision referenced by
-this repository remains `paper-v6.9.3`.
+The source, PDF and metadata are prepared as **v6.9.4**, dated October 13,
+2026. Archive publication is pending. Preparing or merging this revision does
+not publish it; the latest verified archived revision remains `paper-v6.9.3`
+(version DOI `10.5281/zenodo.23110717`). The intended tag is `paper-v6.9.4`.
+
+The deposit artifact is `unitares-v6.pdf`; `.zenodo.json` supplies the
+description and publication metadata. The existing publication workflow uses
+the full tag (`paper-v6.9.4`) as Zenodo's version string. The reviewed Git tag
+retains source, figures and audit scripts; the Zenodo deposit is PDF-only.
 
 ## Source of release metadata
 
@@ -30,9 +36,11 @@ already reported in this paper; higher-tier estimators remain future work.
 
 ## Publish only when the author chooses to release
 
-At release preparation, remove the draft suffix consistently, set the actual
-release date, and update the published-version pointers and citation in
-`README.md`. The version synchronization script edits both this repository and
+The draft suffix has been removed consistently and the planned publication
+date in `.zenodo.json` is `2026-10-13`. After the deposit is confirmed, add its
+version DOI and actual `date-released` to `CITATION.cff`, update the citation
+and latest-published pointers in `README.md`, and remove the pending status.
+If publication occurs on another date, update the release metadata first. The version synchronization script edits both this repository and
 its companion UNITARES checkout, so inspect its scope before using it. It does
 not rebuild the PDF or synchronize the abstract.
 
