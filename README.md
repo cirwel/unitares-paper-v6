@@ -21,6 +21,8 @@
 
 This paper describes the dated deployment and migration studied in its February–April 2026 evidence. Its information-theoretic definitions are research targets. For the current implementation and decision path, consult [UNITARES's EISV computation contract](https://github.com/CIRWEL/unitares/blob/master/docs/EISV_COMPUTATION.md); the paper is not the live specification.
 
+**Claim status (added October 16, 2026; the paper text is unchanged).** UNITARES now reads EISV as a runtime state estimate: digital proprioception senses, EISV estimates state, autonomic governance regulates. Read the paper's free-energy material at that level. The Free-Energy-Principle frame in §4 (*Choice of Frame*) and the *grounded interpretation* remark on the coupling structure are research interpretation. The conclusion's phrase "monitors free-energy proxies" means the deployed tier-3 heuristic estimators that the paper interprets against free-energy targets; no deployed quantity has been shown to track variational free energy. The canonical wording is UNITARES's [EISV proprioception contract](https://github.com/CIRWEL/unitares/blob/master/docs/ontology/eisv-proprioception-contract.md).
+
 Governance of autonomous AI agents is usually assembled from output filters, dashboards, and post-hoc evaluators — each operating on a population the designer imagined as roughly homogeneous. UNITARES argues that this assumption fails once a real fleet is heterogeneous: embodied agents with sensor-driven state, persistent autonomous services, session-bounded coding assistants, and ephemeral parser agents do not share an output modality, a tempo, or a healthy operating point. Fleet-wide normalization is then the wrong target, and a governance framework that collapses the population to a single distribution — what we call *cosmological soup* — loses signal exactly where signal matters.
 
 The paper makes two structural moves:
@@ -49,7 +51,7 @@ The Multi-Agent Network section (§10) presents a theoretical coupled-dynamics e
 
 ## Reading aids
 
-- **Variational free energy** (`−F`, the target semantics of the `E` coordinate) — the Free-Energy-Principle quantity measuring how well an agent's predictions match outcomes; high `E` = low surprise.
+- **Variational free energy** (`−F`, the target semantics of the `E` coordinate) — the Free-Energy-Principle quantity measuring how well an agent's predictions match outcomes. Under that target, high `E` would mean low surprise. The deployed `E` is a heuristic estimate and is not a free-energy measurement.
 - **Cosmological soup** — the failure mode of averaging a heterogeneous agent fleet into a single state distribution, in which no population structure survives normalization.
 - **Manifold coherence** (`C = 1 − ‖Δ‖₂ / ‖Δ‖_max`) — distance from the agent class's healthy operating point, used as a class-conditional replacement for the legacy `tanh`-of-`V` coherence.
 - **Basin flip** — a change in governance-basin assignment (`high` / `boundary` / `low`) when the same state vector is classified under different coherence formulas.
