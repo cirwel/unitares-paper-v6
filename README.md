@@ -3,7 +3,8 @@
 **Information-Theoretic Governance of Heterogeneous Agent Fleets**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19647159.svg)](https://doi.org/10.5281/zenodo.19647159)
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](#license)
+[![Code: Apache 2.0](https://img.shields.io/badge/Code-Apache_2.0-blue.svg)](#license)
 [![Latest published: paper-v6.9.4](https://img.shields.io/badge/latest-paper--v6.9.4-brightgreen.svg)](https://github.com/CIRWEL/unitares-paper-v6/releases/latest)
 
 - 📄 [`unitares-v6.pdf`](./unitares-v6.pdf) — the paper (v6.9.4, published October 13, 2026; [version DOI](https://doi.org/10.5281/zenodo.23337711), tag [`paper-v6.9.4`](https://github.com/CIRWEL/unitares-paper-v6/releases/tag/paper-v6.9.4))
@@ -129,7 +130,14 @@ The Zenodo deposit contains the paper PDF. Source, figures and audit scripts are
 
 ## License
 
-Paper text and figures: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+Copyright 2026 Kenny Wang. This repository is split by path:
+
+| Path | Contents | License |
+|---|---|---|
+| `scripts/` (the `.py`, `.sh` and `.sql` files) | Code | Apache-2.0 ([`LICENSE-APACHE-2.0`](LICENSE-APACHE-2.0)) |
+| `unitares-v6.tex`, `unitares-v6.pdf`, `figures/`, the Markdown files (including the notes under `scripts/audits/`) | Paper text, figures and documentation | CC-BY-4.0 ([`LICENSE`](LICENSE)) |
+
+The Zenodo deposits keep the license recorded on each deposit.
 
 ## Author
 
