@@ -14,6 +14,33 @@
 
 ---
 
+## Read this first (added November 3, 2026; the paper is unchanged)
+
+This paper is a dated report on one deployment between February and April 2026.
+It does not validate a governance method. Read its results as follows.
+
+- **Measured.** The system ran in production, and swapping one coherence
+  formula for another changed 28.9% of basin labels on the same state vectors.
+  That figure counts disagreements between two formulas. It does not show
+  that either set of labels is correct, or that agents were governed better.
+- **Specified but not implemented.** The information-theoretic meanings of
+  E, I, S and V (free energy, mutual information, entropy) are research
+  targets. The deployed system computes all four with heuristic estimators.
+- **Tested since publication.** Whether EISV predicts externally verified bad
+  outcomes was put to a pre-registered read on November 3, 2026. The read
+  closed for insufficient eligible evidence, so the question remains
+  **untested, not disproved**. Reopening it needs a different label source,
+  not more of the same data. See the
+  [result](https://github.com/CIRWEL/unitares/blob/master/docs/proposals/registered/eisv-outcome-grounding-stop-rule-v0.md#result-2026-11-03).
+- **Still standing.** The engineering contribution in §12: a way to migrate
+  a live system's state semantics without changing its live decisions.
+
+For what UNITARES claims today, the
+[evidence and limits page](https://github.com/CIRWEL/unitares/blob/master/docs/EVIDENCE_AND_LIMITS.md)
+is canonical, not this paper.
+
+---
+
 **In one line:** UNITARES updates a state estimate at each agent check-in, computes drift indicators, and records governance interventions. This paper describes the February–April 2026 deployment evidence.
 
 ---
