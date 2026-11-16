@@ -14,6 +14,30 @@
 
 ---
 
+## Read this first (added November 3, 2026; the paper is unchanged)
+
+This paper reports one production deployment, from February to April 2026.
+
+- **Measured in production.** Replacing the fleet-wide coherence formula
+  with a class-conditional one changed 28.9% of basin labels on the same state
+  vectors (§11.6). That shows the formula choice matters at the operating
+  thresholds.
+- **Engineering contribution.** §12 shows how to migrate a live system's
+  state semantics without changing its live decisions.
+- **Targets and estimators.** The information-theoretic meanings of E, I, S
+  and V are the target semantics. The deployed system computes them with
+  tier-3 heuristic estimators, as §4 states.
+- **Since publication.** A pre-registered outcome read ran on November 3,
+  2026. Its frozen fixture filter excluded most of the eligible data, so the
+  read closed without testing the question. See the
+  [result](https://github.com/CIRWEL/unitares/blob/master/docs/proposals/registered/eisv-outcome-grounding-stop-rule-v0.md#result-2026-11-03).
+
+For what UNITARES claims today, the
+[evidence and limits page](https://github.com/CIRWEL/unitares/blob/master/docs/EVIDENCE_AND_LIMITS.md)
+is canonical, not this paper.
+
+---
+
 **In one line:** UNITARES updates a state estimate at each agent check-in, computes drift indicators, and records governance interventions. This paper describes the February–April 2026 deployment evidence.
 
 ---
